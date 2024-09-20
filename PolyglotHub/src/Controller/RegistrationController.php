@@ -4,103 +4,110 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Form\RegistrationFormType;
-use App\Security\EmailVerifier;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
-use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
+use Symfony\Component\Mailer\MailerInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
+use Symfony\Component\Security\Csrf\TokenGenerator\TokenGeneratorInterface;
 
 class RegistrationController extends AbstractController
 {
-    private EmailVerifier $emailVerifier;
+    private MailerInterface $mailer;
+    private TokenGeneratorInterface $tokenGenerator;
 
-    public function __construct(EmailVerifier $emailVerifier)
+    public function __construct(MailerInterface $mailer, TokenGeneratorInterface $tokenGenerator)
     {
-        $this->emailVerifier = $emailVerifier;
+        $this->mailer = $mailer;
+        $this->tokenGenerator = $tokenGenerator;
     }
 
     #[Route('/register', name: 'app_register')]
-    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, Security $security, EntityManagerInterface $entityManager, LoggerInterface $logger): Response
-{
-    $logger->debug('Entering registration process.');
-    $user = new User();
-    
-    // Set user as unverified
-    $user->setVerified(false);
-
-    $form = $this->createForm(RegistrationFormType::class, $user);
-    $form->handleRequest($request);
-
-    if ($form->isSubmitted()) {
-        $logger->debug('Form submitted.');
+    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager, LoggerInterface $logger): Response
+    {
+        $logger->debug('Entering registration process.');
+        $user = new User();
         
-        if ($form->isValid()) {
-            $logger->debug('Form is valid. Processing registration.');
+        // Set user as unverified
+        $user->setVerified(false);
 
-            $plainPassword = $form->get('Password')->getData();
-            $user->setPassword($userPasswordHasher->hashPassword($user, $plainPassword));
-            $selectedRoles = $form->get('roles')->getData();
-            $roles = array_merge($selectedRoles, ['ROLE_USER']);
-            $user->setRoles($roles);
-            $user->setCreateDate(new \DateTime());
+        $form = $this->createForm(RegistrationFormType::class, $user);
+        $form->handleRequest($request);
 
-            try {
-                $entityManager->persist($user);
-                $entityManager->flush();
-                $logger->debug('User registered successfully.');
+        if ($form->isSubmitted()) {
+            $logger->debug('Form submitted.');
+            
+            if ($form->isValid()) {
+                $logger->debug('Form is valid. Processing registration.');
 
-                // Send confirmation email
-                $this->emailVerifier->sendEmailConfirmation(
-                    'app_verify_email',
-                    $user,
-                    (new TemplatedEmail())
-                        ->from(new Address('a.aliev@initum', 'Mail verification bot'))
-                        ->to((string) $user->getEmail())
-                        ->subject('Please Confirm your Email')
-                        ->htmlTemplate('verify.html.twig')
-                );
+                $plainPassword = $form->get('Password')->getData();
+                $user->setPassword($userPasswordHasher->hashPassword($user, $plainPassword));
+                $selectedRoles = $form->get('roles')->getData();
+                $roles = array_merge($selectedRoles, ['ROLE_USER']);
+                $user->setRoles($roles);
+                $user->setCreateDate(new \DateTime());
+                $user->setVerificationToken($this->tokenGenerator->generateToken());
 
-                // Remove automatic login
-                // $security->login($user, 'form_login', 'main');
+                try {
+                    $entityManager->persist($user);
+                    $entityManager->flush();
+                    $logger->debug('User registered successfully.');
 
-                return $this->redirectToRoute('app_login');
+                    // Send confirmation email
+                    $this->sendConfirmationEmail($user);
 
-            } catch (\Exception $e) {
-                $logger->error('Error during registration: ' . $e->getMessage());
-                $this->addFlash('error', 'An error occurred during registration.');
+                    return $this->redirectToRoute('app_login');
+
+                } catch (\Exception $e) {
+                    $logger->error('Error during registration: ' . $e->getMessage());
+                    $this->addFlash('error', 'An error occurred during registration.');
+                }
+            } else {
+                $logger->warning('Form is invalid. Errors: ' . json_encode($form->getErrors()));
             }
-        } else {
-            $logger->warning('Form is invalid. Errors: ' . json_encode($form->getErrors()));
         }
+
+        return $this->render('test.html.twig', [
+            'registrationForm' => $form->createView(),
+        ]);
     }
 
-    return $this->render('test.html.twig', [
-        'registrationForm' => $form->createView(),
-    ]);
-}
-
-    #[Route('/verify/email', name: 'app_verify_email')]
-    public function verifyUserEmail(Request $request): Response
+    private function sendConfirmationEmail(User $user): void
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $email = (new TemplatedEmail())
+            ->from(new Address('a.aliev@initum.fr', 'Mail Verification Bot'))
+            ->to($user->getEmail())
+            ->subject('Please Confirm Your Email')
+            ->htmlTemplate('verify.html.twig')
+            ->context([
+                'user' => $user,
+                'token' => $user->getVerificationToken()
+            ]);
 
-        try {
-            /** @var User $user */
-            $user = $this->getUser();
-            $this->emailVerifier->handleEmailConfirmation($request, $user);
-            $this->addFlash('success', 'Your email address has been verified.');
-        } catch (VerifyEmailExceptionInterface $exception) {
-            $this->addFlash('verify_email_error', $exception->getReason());
+        $this->mailer->send($email);
+    }
+
+    #[Route('/verify/email/{token}', name: 'app_verify_email')]
+    public function verifyUserEmail(string $token, EntityManagerInterface $entityManager): Response
+    {
+        $user = $entityManager->getRepository(User::class)->findOneBy(['verificationToken' => $token]);
+
+        if (!$user) {
+            $this->addFlash('verify_email_error', 'Invalid verification token.');
             return $this->redirectToRoute('app_register');
         }
 
+        
+        $user->setIsVerified(true);
+        $user->setVerificationToken(null); // Clear the token after verification
+        $entityManager->flush();
+
+        $this->addFlash('success', 'Your email address has been verified.');
         return $this->redirectToRoute('app_login');
     }
 }

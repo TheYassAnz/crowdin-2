@@ -36,13 +36,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $update_date = null;
 
-    // Getters and Setters
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $verification_token = null;
 
     public function __construct()
     {
         $this->create_date = new \DateTimeImmutable();
         $this->update_date = new \DateTime();
     }
+
+    // Getters and Setters
+
     public function getId(): ?int
     {
         return $this->id;
@@ -51,7 +55,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setId(int $id): static
     {
         $this->id = $id;
-
         return $this;
     }
 
@@ -63,13 +66,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setEmail(string $email): static
     {
         $this->email = $email;
-
         return $this;
     }
 
     public function getRoles(): array
     {
-        // Ensure at least one role is present
         $roles = $this->roles;
         if (!in_array('ROLE_USER', $roles)) {
             $roles[] = 'ROLE_USER';
@@ -80,13 +81,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setRoles(array $roles): static
     {
         $this->roles = $roles;
-
         return $this;
     }
 
-    /**
-     * Get the hashed password.
-     */
     public function getPassword(): ?string
     {
         return $this->password;
@@ -95,26 +92,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPassword(string $password): static
     {
         $this->password = $password;
-
         return $this;
     }
 
-    // Implementing UserInterface methods
-
-    /**
-     * Returns the identifier for the user (e.g., email).
-     */
     public function getUserIdentifier(): string
     {
         return $this->email;
     }
 
-    /**
-     * Removes sensitive data from the user (e.g., plaintext password, if stored).
-     */
     public function eraseCredentials()
     {
-        // Clear any temporary, sensitive data if needed
+        // Clear any sensitive temporary data if needed
     }
 
     public function isVerified(): bool
@@ -125,7 +113,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setVerified(bool $isVerified): static
     {
         $this->isVerified = $isVerified;
-
         return $this;
     }
 
@@ -137,7 +124,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setCreateDate(\DateTimeInterface $create_date): static
     {
         $this->create_date = $create_date;
-
         return $this;
     }
 
@@ -149,6 +135,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setUpdateDate(\DateTimeInterface $update_date): static
     {
         $this->update_date = new \DateTime();
+        return $this;
+    }
+
+    public function getVerificationToken(): ?string
+    {
+        return $this->verification_token;
+    }
+
+    public function setVerificationToken(?string $verification_token): static
+    {
+        $this->verification_token = $verification_token;
 
         return $this;
     }
