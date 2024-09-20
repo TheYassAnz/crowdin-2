@@ -44,8 +44,11 @@ class RegistrationController extends AbstractController
         if ($form->isValid()) {
             $logger->debug('Form is valid. Processing registration.');
 
-            $plainPassword = $form->get('plainPassword')->getData();
+            $plainPassword = $form->get('Password')->getData();
             $user->setPassword($userPasswordHasher->hashPassword($user, $plainPassword));
+            $selectedRoles = $form->get('roles')->getData();
+            $roles = array_merge($selectedRoles, ['ROLE_USER']);
+            $user->setRoles($roles);
             $user->setCreateDate(new \DateTime());
 
             try {

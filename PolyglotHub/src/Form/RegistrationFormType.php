@@ -5,6 +5,7 @@ namespace App\Form;
 use App\Entity\User;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -19,6 +20,15 @@ class RegistrationFormType extends AbstractType
     {
         $builder
             ->add('email')
+            ->add('roles', ChoiceType::class, [
+                'choices' => [
+                    'Translator' => 'ROLE_TRANSLATOR',
+                    'Project Manager' => 'ROLE_PROJECT_MANAGER',
+                ],
+                'expanded' => true,
+                'multiple' => true,
+                'label' => 'Who are you ?',
+            ])
             ->add('agreeTerms', CheckboxType::class, [
                 'mapped' => false,
                 'constraints' => [
@@ -27,9 +37,7 @@ class RegistrationFormType extends AbstractType
                     ]),
                 ],
             ])
-            ->add('plainPassword', PasswordType::class, [
-                // instead of being set onto the object directly,
-                // this is read and encoded in the controller
+            ->add('Password', PasswordType::class, [
                 'mapped' => false,
                 'attr' => ['autocomplete' => 'new-password'],
                 'constraints' => [
@@ -39,12 +47,11 @@ class RegistrationFormType extends AbstractType
                     new Length([
                         'min' => 6,
                         'minMessage' => 'Your password should be at least {{ limit }} characters',
-                        // max length allowed by Symfony for security reasons
                         'max' => 4096,
                     ]),
                 ],
             ])
-            ->add('save', SubmitType::class, ['label' => 'Create / Update Project'])
+            ->add('save', SubmitType::class, ['label' => 'Submit'])
         ;
     }
 

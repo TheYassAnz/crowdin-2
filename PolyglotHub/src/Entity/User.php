@@ -27,12 +27,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255)]
     private ?string $password = null;
 
-    // #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    // private ?\DateTimeInterface $create_date = null;
-
-    // #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    // private ?\DateTimeInterface $update_date = null;
-
     #[ORM\Column]
     private bool $isVerified = false;
 
@@ -73,9 +67,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    /**
-     * Returns an array of roles, ensuring it always contains 'ROLE_USER'.
-     */
     public function getRoles(): array
     {
         // Ensure at least one role is present
