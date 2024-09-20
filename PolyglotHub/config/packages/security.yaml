@@ -1,0 +1,64 @@
+security:
+    # https://symfony.com/doc/current/security.html#registering-the-user-hashing-passwords
+    password_hashers:
+        Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
+
+    # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
+    providers:
+        # Used to reload user from session & other features (e.g. switch_user)
+        app_user_provider:
+            entity:
+                class: App\Entity\User
+                property: email
+
+    firewalls:
+        # Development firewall, allows access to development tools without security
+        dev:
+            pattern: '^/(_(profiler|wdt)|css|images|js)/'
+            security: false
+            host: 'localhost'
+
+        # Main firewall for the application
+        main:
+            lazy: true
+            provider: app_user_provider
+            form_login:
+                # "app_login" is the name of the route created previously
+                login_path: app_login
+                check_path: app_login
+                enable_csrf: true
+                default_target_path: app_login # Redirect to homepage path after login
+            logout:
+                path: app_logout
+                # where to redirect after logout
+                # target: app_any_route
+
+
+            # If using custom authenticators, uncomment this section
+            # custom_authenticators:
+            #     - App\Security\AppAuthenticator
+
+            # Enable session-based or token-based authentication (uncomment below if needed)
+            # https://symfony.com/doc/current/security.html#the-firewall
+
+            # Switch user (impersonation) feature
+            # https://symfony.com/doc/current/security/impersonating_user.html
+            # switch_user: true
+
+    # Easy way to control access for large sections of your site
+    # Note: Only the *first* access control that matches will be used
+    access_control:
+        # - { path: ^/admin, roles: ROLE_ADMIN }
+        - { path: ^/profile, roles: ROLE_USER }
+
+# Test-specific configuration
+when@test:
+    security:
+        password_hashers:
+            # Password hashers during testing are set to the lowest possible values
+            # to speed up test execution
+            Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface:
+                algorithm: auto
+                cost: 4 # Lowest possible value for bcrypt
+                time_cost: 3 # Lowest possible value for Argon2i/Argon2id
+                memory_cost: 10 # Lowest possible value for Argon2i/Argon2id
