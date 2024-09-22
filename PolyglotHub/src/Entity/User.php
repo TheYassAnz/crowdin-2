@@ -37,7 +37,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?\DateTimeInterface $update_date = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $verification_token = null;
+    private ?string $verificationToken = null;
 
     public function __construct()
     {
@@ -140,12 +140,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getVerificationToken(): ?string
     {
-        return $this->verification_token;
+        return $this->verificationToken;
     }
 
-    public function setVerificationToken(?string $verification_token): static
+    public function setVerificationToken(?string $verificationToken): static
     {
-        $this->verification_token = $verification_token;
+        $this->verificationToken = $verificationToken;
 
         return $this;
     }

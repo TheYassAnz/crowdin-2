@@ -4,6 +4,10 @@ controllers:
         namespace: App\Controller
     type: attribute
 
+app_verify_email:
+    path: /verify-email/{token}
+    controller: App\Controller\RegistrationController::verifyEmail
+
 home:
     path: /
     controller: App\Controller\HomeController::index
