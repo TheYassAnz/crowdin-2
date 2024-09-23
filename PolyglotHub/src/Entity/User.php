@@ -45,8 +45,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->update_date = new \DateTime();
     }
 
-    // Getters and Setters
-
     public function getId(): ?int
     {
         return $this->id;
@@ -102,7 +100,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function eraseCredentials()
     {
-        // Clear any sensitive temporary data if needed
+        
     }
 
     public function isVerified(): bool

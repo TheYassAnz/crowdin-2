@@ -2,6 +2,7 @@ twig:
     file_name_pattern: '*.twig'
     strict_variables: false
     debug: false
+    cache: false
 
 when@test:
     strict_variables: false

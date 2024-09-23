@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello ProfileController!{% endblock %}
+{% block title %}Profile{% endblock %}
 
 {% block body %}
 <style>
@@ -8,13 +8,12 @@
     .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
 </style>
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
+    <h1>User Profile</h1>
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>/home/aaliev/dev/Crowdin/PolyglotHub/src/Controller/ProfileController.php</code></li>
-        <li>Your template at <code>/home/aaliev/dev/Crowdin/PolyglotHub/templates/profile/index.html.twig</code></li>
-    </ul>
-</div>
+<p>Email: {{ user.email }}</p>
+<p>Roles: {{ user.roles ? user.roles|join(', ') : 'No roles found' }}</p>
+<p>Is Verified: {{ user.isVerified ? 'Yes' : 'No' }}</p>
+<p>Account Created On: {{ user.create_date|date('Y-m-d H:i') }}</p>
+<p>Last Updated On: {{ user.update_date|date('Y-m-d H:i') }}</p>
+
 {% endblock %}
