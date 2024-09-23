@@ -64,10 +64,9 @@ class RegistrationController extends AbstractController
                 $entityManager->flush();
                 $logger->debug('User registered successfully.');
 
-                // Send confirmation email
+            
                 $this->sendConfirmationEmail($user);
 
-                // Optionally, add a flash message for user feedback
                 $this->addFlash('success', 'Registration successful! Please check your email to verify your account.');
 
                 return $this->redirectToRoute('app_login');
