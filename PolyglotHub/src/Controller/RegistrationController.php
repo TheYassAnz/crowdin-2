@@ -99,13 +99,34 @@ class RegistrationController extends AbstractController
         $this->mailer->send($email);
     }
 
+    // #[Route('/verify-email/{token}', name: 'app_verify_email')]
+    // public function verifyEmail(string $token, UserRepository $userRepository, EntityManagerInterface $entityManager): Response
+    // {
+    //     $user = $userRepository->findOneBy(['verificationToken' => $token]);
+
+    //     if (!$user) {
+    //         throw $this->createNotFoundException('This verification token is invalid.');
+    //     }
+
+    //     $user->setVerified(true);
+    //     $user->setVerificationToken(null);
+
+    //     $entityManager->persist($user);
+    //     $entityManager->flush();
+
+    //     $this->addFlash('success', 'Your email has been verified. You can now log in.');
+
+    //     return $this->redirectToRoute('app_login');
+    // }
+
     #[Route('/verify-email/{token}', name: 'app_verify_email')]
     public function verifyEmail(string $token, UserRepository $userRepository, EntityManagerInterface $entityManager): Response
     {
         $user = $userRepository->findOneBy(['verificationToken' => $token]);
 
         if (!$user) {
-            throw $this->createNotFoundException('This verification token is invalid.');
+            $this->addFlash('danger', 'The verification token is invalid or expired.');
+            return $this->render('registration/verification_failed.html.twig');
         }
 
         $user->setVerified(true);
@@ -118,4 +139,5 @@ class RegistrationController extends AbstractController
 
         return $this->redirectToRoute('app_login');
     }
+
 }
