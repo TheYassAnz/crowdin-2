@@ -9,10 +9,7 @@ use Symfony\Component\Routing\Attribute\Route;
 class SourcesController extends AbstractController
 {
     #[Route('/sources', name: 'app_sources')]
-    public function index(): Response
-    {
-        return $this->render('sources/index.html.twig', [
-            'controller_name' => 'SourcesController',
-        ]);
+    function index(): Response {
+        return $this->render('sources/index.html.twig');
     }
 }
