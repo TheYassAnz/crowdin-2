@@ -98,9 +98,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->email;
     }
 
-    public function eraseCredentials()
+    public function eraseCredentials(): void
     {
-        
+    
     }
 
     public function isVerified(): bool
