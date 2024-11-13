@@ -25,7 +25,6 @@ class Projects
     #[ORM\Column(length: 255)]
     private ?string $target_language = null;
 
-
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $create_date = null;
 
@@ -36,6 +35,10 @@ class Projects
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
+    #[ORM\ManyToMany(targetEntity: Language::class)]
+    #[ORM\JoinTable(name: 'project_language')]
+    private Collection $languages;
+
     /**
      * @var Collection<int, Sources>
      */
@@ -44,6 +47,7 @@ class Projects
 
     public function __construct()
     {
+        $this->languages = new ArrayCollection();
         $this->sources = new ArrayCollection();
     }
 
@@ -131,6 +135,27 @@ class Projects
         return $this;
     }
 
+    public function getLanguages(): Collection
+    {
+        return $this->languages;
+    }
+
+    public function addLanguage(Language $language): static
+    {
+        if (!$this->languages->contains($language)) {
+            $this->languages[] = $language;
+        }
+
+        return $this;
+    }
+
+    public function removeLanguage(Language $language): static
+    {
+        $this->languages->removeElement($language);
+
+        return $this;
+    }
+
     /**
      * @return Collection<int, Sources>
      */
@@ -152,7 +177,6 @@ class Projects
     public function removeSource(Sources $source): static
     {
         if ($this->sources->removeElement($source)) {
-            // set the owning side to null (unless already changed)
             if ($source->getProject() === $this) {
                 $source->setProject(null);
             }
@@ -160,5 +184,4 @@ class Projects
 
         return $this;
     }
-
 }

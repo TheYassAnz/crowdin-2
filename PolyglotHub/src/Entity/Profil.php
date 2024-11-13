@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use App\Repository\ProfilRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 #[ORM\Entity(repositoryClass: ProfilRepository::class)]
 class Profil
@@ -19,17 +21,18 @@ class Profil
     #[ORM\Column(length: 255)]
     private ?string $skills = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $languages = null;
+    #[ORM\ManyToMany(targetEntity: Language::class)]
+    #[ORM\JoinTable(name: 'profil_language')]
+    private Collection $languages;
 
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(nullable: false)]
-
-    #[ORM\Column]
+    public function __construct()
+    {
+        $this->languages = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -67,14 +70,23 @@ class Profil
         return $this;
     }
 
-    public function getLanguages(): ?string
+    public function getLanguages(): Collection
     {
         return $this->languages;
     }
 
-    public function setLanguages(string $languages): static
+    public function addLanguage(Language $language): static
     {
-        $this->languages = $languages;
+        if (!$this->languages->contains($language)) {
+            $this->languages[] = $language;
+        }
+
+        return $this;
+    }
+
+    public function removeLanguage(Language $language): static
+    {
+        $this->languages->removeElement($language);
 
         return $this;
     }
