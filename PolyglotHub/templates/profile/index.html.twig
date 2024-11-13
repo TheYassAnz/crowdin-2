@@ -7,11 +7,12 @@
 <div class="container mt-5 w-50 mx-auto border rounded p-5">
     <h2 class="mb-3">My Profile</h2>
     <form>
-        <fieldset disabled>
+        <fieldset>
             <div class="form-group mb-3">
                 <label for="email" class="form-label">Email:</label>
                 <input type="email" class="form-control" id="email" value="{{ user.email }}" readonly>
             </div>
+            <!-- A retirer -->
             <div class="form-group mb-3">
                 <label for="roles" class="form-label">Roles:</label>
                 <input type="text" class="form-control" id="roles" value="{{ user.roles ? user.roles|join(', ') : 'No roles found' }}">
