@@ -4,7 +4,7 @@ twig:
     debug: false
     cache: false
     form_themes: 
-        - 'bootstrap_4_layout.html.twig'
+        - 'bootstrap_5_layout.html.twig'
 
 when@test:
     strict_variables: false
