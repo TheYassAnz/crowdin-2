@@ -39,10 +39,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $verificationToken = null;
 
+    /**
+     * @var Collection<int, Language>
+     */
+    #[ORM\ManyToMany(targetEntity: Language::class, inversedBy: 'users')]
+    #[ORM\JoinTable(name: 'user_language')]
+    private Collection $languages;
+
     public function __construct()
     {
         $this->create_date = new \DateTimeImmutable();
         $this->update_date = new \DateTime();
+        $this->languages = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -144,6 +152,27 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setVerificationToken(?string $verificationToken): static
     {
         $this->verificationToken = $verificationToken;
+
+        return $this;
+    }
+
+    public function getLanguages(): Collection
+    {
+        return $this->languages;
+    }
+
+    public function addLanguage(Language $language): static
+    {
+        if (!$this->languages->contains($language)) {
+            $this->languages[] = $language;
+        }
+
+        return $this;
+    }
+
+    public function removeLanguage(Language $language): static
+    {
+        $this->languages->removeElement($language);
 
         return $this;
     }

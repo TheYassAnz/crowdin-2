@@ -37,7 +37,7 @@ class Sources
     /**
      * @var Collection<int, Translations>
      */
-    #[ORM\OneToMany(targetEntity: Translations::class, mappedBy: 'project')]
+    #[ORM\OneToMany(targetEntity: Translations::class, mappedBy: 'source')]
     private Collection $translations;
 
     /**
@@ -46,10 +46,15 @@ class Sources
     #[ORM\OneToMany(targetEntity: Translations::class, mappedBy: 'source')]
     private Collection $test;
 
+    #[ORM\ManyToMany(targetEntity: Language::class)]
+    #[ORM\JoinTable(name: 'source_language')]
+    private Collection $languages;
+
     public function __construct()
     {
         $this->translations = new ArrayCollection();
         $this->test = new ArrayCollection();
+        $this->languages = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -136,9 +141,27 @@ class Sources
         return $this;
     }
 
-    /**
-     * @return Collection<int, Translations>
-     */
+    public function getLanguages(): Collection
+    {
+        return $this->languages;
+    }
+
+    public function addLanguage(Language $language): static
+    {
+        if (!$this->languages->contains($language)) {
+            $this->languages[] = $language;
+        }
+
+        return $this;
+    }
+
+    public function removeLanguage(Language $language): static
+    {
+        $this->languages->removeElement($language);
+
+        return $this;
+    }
+
     public function getTranslations(): Collection
     {
         return $this->translations;
@@ -148,7 +171,7 @@ class Sources
     {
         if (!$this->translations->contains($translation)) {
             $this->translations->add($translation);
-            $translation->setProject($this);
+            $translation->setSource($this);
         }
 
         return $this;
@@ -157,18 +180,14 @@ class Sources
     public function removeTranslation(Translations $translation): static
     {
         if ($this->translations->removeElement($translation)) {
-            // set the owning side to null (unless already changed)
-            if ($translation->getProject() === $this) {
-                $translation->setProject(null);
+            if ($translation->getSource() === $this) {
+                $translation->setSource(null);
             }
         }
 
         return $this;
     }
 
-    /**
-     * @return Collection<int, Translations>
-     */
     public function getTest(): Collection
     {
         return $this->test;
@@ -187,7 +206,6 @@ class Sources
     public function removeTest(Translations $test): static
     {
         if ($this->test->removeElement($test)) {
-            // set the owning side to null (unless already changed)
             if ($test->getSource() === $this) {
                 $test->setSource(null);
             }
@@ -195,5 +213,4 @@ class Sources
 
         return $this;
     }
-
 }
