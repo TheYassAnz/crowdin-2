@@ -3,17 +3,26 @@
 {% block title %}PROFILE{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
 
-    <h1>User Profile</h1>
-
-<p>Email: {{ user.email }}</p>
-<p>Roles: {{ user.roles ? user.roles|join(', ') : 'No roles found' }}</p>
-<p>Is Verified: {{ user.isVerified ? 'Yes' : 'No' }}</p>
-<p>Account Created On: {{ user.create_date|date('Y-m-d H:i') }}</p>
-<p>Last Updated On: {{ user.update_date|date('Y-m-d H:i') }}</p>
-
+<div class="container mt-5 w-50 mx-auto border rounded p-5">
+    <h2 class="mb-3">My Profile</h2>
+    <form>
+        <fieldset disabled>
+            <div class="form-group mb-3">
+                <label for="email" class="form-label">Email:</label>
+                <input type="email" class="form-control" id="email" value="{{ user.email }}" readonly>
+            </div>
+            <div class="form-group mb-3">
+                <label for="roles" class="form-label">Roles:</label>
+                <input type="text" class="form-control" id="roles" value="{{ user.roles ? user.roles|join(', ') : 'No roles found' }}">
+            </div>
+            <div class="form-group mb-3">
+                <label class="form-label" for="isVerified">
+                    Email verified:
+                </label>
+                <input class="form-check-input" type="checkbox" role="switch" id="isVerified" {{ user.isVerified ? 'checked' : ''}}>
+            </div>
+        </fieldset>
+    </form>
+</div>
 {% endblock %}
