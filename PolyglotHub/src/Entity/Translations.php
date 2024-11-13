@@ -19,7 +19,6 @@ class Translations
     #[ORM\Column(length: 255)]
     private ?string $language = null;
 
-
     #[ORM\Column(length: 255)]
     private ?string $translated_content = null;
 
@@ -32,7 +31,15 @@ class Translations
     #[ORM\ManyToOne(inversedBy: 'test')]
     private ?Sources $source = null;
 
-    
+    #[ORM\ManyToMany(targetEntity: Language::class)]
+    #[ORM\JoinTable(name: 'translation_language')]
+    private Collection $languages;
+
+    public function __construct()
+    {
+        $this->languages = new ArrayCollection();
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -105,4 +112,24 @@ class Translations
         return $this;
     }
 
+    public function getLanguages(): Collection
+    {
+        return $this->languages;
+    }
+
+    public function addLanguage(Language $language): static
+    {
+        if (!$this->languages->contains($language)) {
+            $this->languages[] = $language;
+        }
+
+        return $this;
+    }
+
+    public function removeLanguage(Language $language): static
+    {
+        $this->languages->removeElement($language);
+
+        return $this;
+    }
 }
