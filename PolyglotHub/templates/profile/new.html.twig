@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}PROFILE{% endblock %}
+
+{% block body %}
+
+<div class="w-50 m-auto mt-5">
+    <h2 class="mb-3">My Profile</h2>
+    {{ form_start(form) }}
+    {{ form_widget(form) }}
+    <button type="submit" class="btn btn-primary">Envoyer</button>
+    {{ form_end(form) }}
+
+</div>
+
+{% endblock %}
