@@ -32,17 +32,7 @@
                 <div>
                     <small>{{ translation.getTranslatedContent() }}</small></small>
                 </div>
-                <small class="text-muted">Langage cible : {{ source.project.getTargetLanguage().getName() }}</small>
-            </div>
-            <div class="mt-3">
-                <h6>Traductions :</h6>
-                <ul>
-                    {% for translation in source.translations %}
-                    <li><small>{{ translation.getTranslatedContent() }}</small></li>
-                    {% else %}
-                    <li>Aucune traduction disponible</li>
-                    {% endfor %}
-                </ul>
+                <small class="text-muted">Langage cible : {{ translation.source.project.getTargetLanguage().getName() }}</small>
             </div>
         </div>
     </div>

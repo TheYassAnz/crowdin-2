@@ -41,4 +41,11 @@ class TranslationsController extends AbstractController
             'form' => $form,
         ]);
     }
+    #[Route('/{id}', name: 'app_translations_show', requirements: ['id' => '\d+'], methods: ['GET'])]
+    public function show(?Translations $translation): Response
+    {
+        return $this->render('translations/show.html.twig', [
+            'translation' => $translation,
+        ]);
+    }
 }

@@ -23,7 +23,7 @@
         <a href="{{ path('app_sources') }}" class="btn btn-secondary">Retour à la liste</a>
     </div>
     <div class="list-group">
-        <div class="list-group-item list-group-item-action">
+        <div class="list-group-item">
             <div class="d-flex w-100 justify-content-between p-3">
                 <h5 class="mb-1">{{ source.content }}</h5>
                 <small class="text-muted">Clé : {{ source.cle }}</small>
@@ -34,9 +34,9 @@
             </div>
             <div class="mt-3">
                 <h6>Traductions :</h6>
-                <ul>
+                <ul class="list-group">
                     {% for translation in source.translations %}
-                    <li><small>{{ translation.getTranslatedContent() }}</small></li>
+                    <a href="{{ path('app_translations_show', {id: translation.id})}}" class="list-group-item list-group-item-action"><small>{{ translation.getTranslatedContent() }}</small></a>
                     {% else %}
                     <li>Aucune traduction disponible</li>
                     {% endfor %}
