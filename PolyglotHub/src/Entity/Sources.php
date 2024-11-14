@@ -21,12 +21,6 @@ class Sources
     #[ORM\Column(length: 255)]
     private ?string $cle = null;
 
-    #[ORM\Column]
-    private ?int $project_id = null;
-
-    #[ORM\ManyToOne(inversedBy: 'sources')]
-    private ?Projects $project = null;
-
     /**
      * @var Collection<int, Translations>
      */
@@ -80,28 +74,6 @@ class Sources
     public function setCle(string $cle): static
     {
         $this->cle = $cle;
-        return $this;
-    }
-
-    public function getProjectId(): ?int
-    {
-        return $this->project_id;
-    }
-
-    public function setProjectId(int $project_id): static
-    {
-        $this->project_id = $project_id;
-        return $this;
-    }
-
-    public function getProject(): ?Projects
-    {
-        return $this->project;
-    }
-
-    public function setProject(?Projects $project): static
-    {
-        $this->project = $project;
         return $this;
     }
 

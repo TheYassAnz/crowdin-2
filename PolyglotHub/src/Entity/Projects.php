@@ -18,14 +18,6 @@ class Projects
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    #[ORM\ManyToOne(targetEntity: Language::class)]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Language $start_language = null;
-
-    #[ORM\ManyToOne(targetEntity: Language::class)]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Language $target_language = null;
-
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
@@ -61,30 +53,6 @@ class Projects
     public function setName(string $name): static
     {
         $this->name = $name;
-
-        return $this;
-    }
-
-    public function getStartLanguage(): ?Language
-    {
-        return $this->start_language;
-    }
-
-    public function setStartLanguage(?Language $start_language): static
-    {
-        $this->start_language = $start_language;
-
-        return $this;
-    }
-
-    public function getTargetLanguage(): ?Language
-    {
-        return $this->target_language;
-    }
-
-    public function setTargetLanguage(?Language $target_language): static
-    {
-        $this->target_language = $target_language;
 
         return $this;
     }

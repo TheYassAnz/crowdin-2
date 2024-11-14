@@ -22,8 +22,6 @@ class Profil
     #[ORM\JoinColumn(nullable: false)]
     private ?Language $preferred_language = null;
 
-    #[ORM\ManyToMany(targetEntity: Language::class)]
-    #[ORM\JoinTable(name: 'profil_language')]
     private Collection $languages;
 
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
@@ -65,26 +63,6 @@ class Profil
     public function setPreferredLanguage(Language $preferred_language): static
     {
         $this->preferred_language = $preferred_language;
-        return $this;
-    }
-
-    public function getLanguages(): Collection
-    {
-        return $this->languages;
-    }
-
-    public function addLanguage(Language $language): static
-    {
-        if (!$this->languages->contains($language)) {
-            $this->languages[] = $language;
-        }
-
-        return $this;
-    }
-
-    public function removeLanguage(Language $language): static
-    {
-        $this->languages->removeElement($language);
         return $this;
     }
 
