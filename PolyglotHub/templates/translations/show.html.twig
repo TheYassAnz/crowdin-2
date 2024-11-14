@@ -23,15 +23,17 @@
         <a href="{{ path('app_translations') }}" class="btn btn-secondary">Retour à la liste</a>
     </div>
     <div class="list-group">
-        <div class="list-group-item list-group-item-action">
+        <div class="list-group-item">
             <div class="d-flex w-100 justify-content-between p-3">
-                <h5 class="mb-1">{{ translation.source.content }}</h5>
+                <div>
+                    <span class="me-3">{{ translation.source.content }}</span>
+                    <span>&rarr;</span>
+                    <span class="ms-3">{{ translation.getTranslatedContent() }}</span>
+                </div>
                 <small class="text-muted">Clé : {{ translation.source.cle }}</small>
             </div>
-            <div class="d-flex w-100 justify-content-between px-3 mb-3">
-                <div>
-                    <small>{{ translation.getTranslatedContent() }}</small></small>
-                </div>
+            <div class="d-flex w-100 justify-content-end px-3 mb-3">
+
                 <small class="text-muted">Langage cible : {{ translation.source.project.getTargetLanguage().getName() }}</small>
             </div>
         </div>
