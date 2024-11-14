@@ -23,11 +23,11 @@ class Projects
     private ?User $user = null;
 
     #[ORM\ManyToOne(targetEntity: Language::class)]
-    #[ORM\JoinColumn(name: "start_language_id", referencedColumnName: "id", nullable: false)]
+    #[ORM\JoinColumn(name: "start_language", referencedColumnName: "id", nullable: false)]
     private ?Language $start_language = null;
 
     #[ORM\ManyToOne(targetEntity: Language::class)]
-    #[ORM\JoinColumn(name: "target_language_id", referencedColumnName: "id", nullable: false)]
+    #[ORM\JoinColumn(name: "target_language", referencedColumnName: "id", nullable: false)]
     private ?Language $target_language = null;
 
     /**
@@ -61,30 +61,6 @@ class Projects
     public function setName(string $name): static
     {
         $this->name = $name;
-
-        return $this;
-    }
-
-    public function getCreateDate(): ?\DateTimeInterface
-    {
-        return $this->create_date;
-    }
-
-    public function setCreateDate(\DateTimeInterface $create_date): static
-    {
-        $this->create_date = $create_date;
-
-        return $this;
-    }
-
-    public function getUpdateDate(): ?\DateTimeInterface
-    {
-        return $this->update_date;
-    }
-
-    public function setUpdateDate(\DateTimeInterface $update_date): static
-    {
-        $this->update_date = $update_date;
 
         return $this;
     }
