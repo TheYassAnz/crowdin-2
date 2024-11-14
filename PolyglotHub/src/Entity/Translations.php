@@ -18,6 +18,10 @@ class Translations
     #[ORM\Column(length: 255)]
     private ?string $translated_content = null;
 
+    #[ORM\ManyToOne(targetEntity: Sources::class, inversedBy: 'translations')]
+    #[ORM\JoinColumn(name: "source_id", referencedColumnName: "id", nullable: false)]
+    private ?Sources $source = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -37,6 +41,17 @@ class Translations
     public function setTranslatedContent(string $translated_content): static
     {
         $this->translated_content = $translated_content;
+        return $this;
+    }
+
+    public function getSource(): ?Sources
+    {
+        return $this->source;
+    }
+
+    public function setSource(?Sources $source): static
+    {
+        $this->source = $source;
         return $this;
     }
 }

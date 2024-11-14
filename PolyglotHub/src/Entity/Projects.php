@@ -22,6 +22,14 @@ class Projects
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
+    #[ORM\ManyToOne(targetEntity: Language::class)]
+    #[ORM\JoinColumn(name: "start_language_id", referencedColumnName: "id", nullable: false)]
+    private ?Language $start_language = null;
+
+    #[ORM\ManyToOne(targetEntity: Language::class)]
+    #[ORM\JoinColumn(name: "target_language_id", referencedColumnName: "id", nullable: false)]
+    private ?Language $target_language = null;
+
     /**
      * @var Collection<int, Sources>
      */
@@ -118,6 +126,30 @@ class Projects
                 $source->setProject(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getStartLanguage(): ?Language
+    {
+        return $this->start_language;
+    }
+
+    public function setStartLanguage(?Language $start_language): static
+    {
+        $this->start_language = $start_language;
+
+        return $this;
+    }
+
+    public function getTargetLanguage(): ?Language
+    {
+        return $this->target_language;
+    }
+
+    public function setTargetLanguage(?Language $target_language): static
+    {
+        $this->target_language = $target_language;
 
         return $this;
     }

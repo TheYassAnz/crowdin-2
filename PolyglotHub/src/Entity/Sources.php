@@ -21,6 +21,10 @@ class Sources
     #[ORM\Column(length: 255)]
     private ?string $cle = null;
 
+    #[ORM\ManyToOne(targetEntity: Projects::class)]
+    #[ORM\JoinColumn(name: "project_id", referencedColumnName: "id", nullable: false)]
+    private ?Projects $project = null;
+
     /**
      * @var Collection<int, Translations>
      */
@@ -33,15 +37,10 @@ class Sources
     #[ORM\OneToMany(targetEntity: Translations::class, mappedBy: 'source')]
     private Collection $test;
 
-    #[ORM\ManyToMany(targetEntity: Language::class)]
-    #[ORM\JoinTable(name: 'source_language')]
-    private Collection $languages;
-
     public function __construct()
     {
         $this->translations = new ArrayCollection();
         $this->test = new ArrayCollection();
-        $this->languages = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -77,22 +76,14 @@ class Sources
         return $this;
     }
 
-    public function getLanguages(): Collection
+    public function getProject(): ?Projects
     {
-        return $this->languages;
+        return $this->project;
     }
 
-    public function addLanguage(Language $language): static
+    public function setProject(?Projects $project): static
     {
-        if (!$this->languages->contains($language)) {
-            $this->languages[] = $language;
-        }
-        return $this;
-    }
-
-    public function removeLanguage(Language $language): static
-    {
-        $this->languages->removeElement($language);
+        $this->project = $project;
         return $this;
     }
 
