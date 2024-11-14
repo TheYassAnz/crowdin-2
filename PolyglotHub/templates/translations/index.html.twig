@@ -1,20 +1,44 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}TRANSLATIONS{% endblock %}
+{% block title %}Traductions{% endblock %}
 
 {% block body %}
 <style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+    .example-wrapper {
+        margin: 1em auto;
+        max-width: 800px;
+        width: 95%;
+        font: 18px/1.5 sans-serif;
+    }
+
+    .example-wrapper code {
+        background: #F5F5F5;
+        padding: 2px 6px;
+    }
 </style>
 
 <div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
+    <div class="d-flex justify-content-between my-5">
+        <a href="{{ path('app_translations_new') }}" class="btn btn-primary">Créer une traduction</a>
+    </div>
+    <h1>Liste des traductions: </h1>
+    <div class="list-group">
+        {% for translation in translations %}
+        <a class="list-group-item list-group-item-action" href="{{ path('app_translations_show', {id: translation.id}) }}">
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>/home/aaliev/dev/Crowdin/PolyglotHub/src/Controller/TranslationsController.php</code></li>
-        <li>Your template at <code>/home/aaliev/dev/Crowdin/PolyglotHub/templates/translations/index.html.twig</code></li>
-    </ul>
+            <div class="d-flex w-100 justify-content-between p-3 mb-3">
+                <div><span class="me-3">{{ translation.source.content }}</span>
+                    <span>&rarr;</span>
+                    <span class="ms-3">{{ translation.getTranslatedContent() }}</span>
+                </div>
+
+                <small class="text-muted">Clé: {{ translation.source.cle }}</small>
+            </div>
+            <div class="d-flex w-100 justify-content-end px-3 mb-3">
+                <small class="text-muted">Language cible : {{ translation.source.project.getTargetLanguage().getName() }}</small>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
 </div>
 {% endblock %}

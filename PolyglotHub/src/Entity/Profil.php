@@ -18,11 +18,10 @@ class Profil
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $description = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $skills = null;
+    #[ORM\OneToOne(targetEntity: Language::class)]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Language $preferred_language = null;
 
-    #[ORM\ManyToMany(targetEntity: Language::class)]
-    #[ORM\JoinTable(name: 'profil_language')]
     private Collection $languages;
 
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
@@ -42,7 +41,6 @@ class Profil
     public function setId(int $id): static
     {
         $this->id = $id;
-
         return $this;
     }
 
@@ -54,40 +52,17 @@ class Profil
     public function setDescription(?string $description): static
     {
         $this->description = $description;
-
         return $this;
     }
 
-    public function getSkills(): ?string
+    public function getPreferredLanguage(): ?Language
     {
-        return $this->skills;
+        return $this->preferred_language;
     }
 
-    public function setSkills(string $skills): static
+    public function setPreferredLanguage(Language $preferred_language): static
     {
-        $this->skills = $skills;
-
-        return $this;
-    }
-
-    public function getLanguages(): Collection
-    {
-        return $this->languages;
-    }
-
-    public function addLanguage(Language $language): static
-    {
-        if (!$this->languages->contains($language)) {
-            $this->languages[] = $language;
-        }
-
-        return $this;
-    }
-
-    public function removeLanguage(Language $language): static
-    {
-        $this->languages->removeElement($language);
-
+        $this->preferred_language = $preferred_language;
         return $this;
     }
 
@@ -99,7 +74,6 @@ class Profil
     public function setUser(User $user): static
     {
         $this->user = $user;
-
         return $this;
     }
 }

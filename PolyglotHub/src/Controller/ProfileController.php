@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Profil;
 use App\Form\ProfileType;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -26,18 +27,30 @@ class ProfileController extends AbstractController
     }
 
     #[Route('/profile', name: 'app_profile')]
-    public function new(Request $request): Response
+    public function new(Request $request, EntityManagerInterface $entityManager, SecurityController $security): Response
     {
-        $profil = new Profil();
+        $user = $security->getUser();
+        $profil = $entityManager->getRepository(Profil::class)->findOneBy(['user' => $user]);
+
+        if (!$profil) {
+            $profil = new Profil();
+            $profil->setUser($user);
+        }
+
         $form = $this->createForm(ProfileType::class, $profil);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->persist($profil);
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Profile successfuly updated !');
+
+            return $this->redirectToRoute('home');
+        }
 
         return $this->render('profile/new.html.twig', [
             'form' => $form,
         ]);
-
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            // faire quelque chose
-        }
     }
 }

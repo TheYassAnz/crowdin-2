@@ -5,7 +5,6 @@ namespace App\Entity;
 use App\Repository\ProjectsRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ProjectsRepository::class)]
@@ -19,25 +18,17 @@ class Projects
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $start_language = null;
-
-    #[ORM\Column(length: 255)]
-    private ?string $target_language = null;
-
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $create_date = null;
-
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $update_date = null;
-
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
-    #[ORM\ManyToMany(targetEntity: Language::class)]
-    #[ORM\JoinTable(name: 'project_language')]
-    private Collection $languages;
+    #[ORM\ManyToOne(targetEntity: Language::class)]
+    #[ORM\JoinColumn(name: "start_language", referencedColumnName: "id", nullable: false)]
+    private ?Language $start_language = null;
+
+    #[ORM\ManyToOne(targetEntity: Language::class)]
+    #[ORM\JoinColumn(name: "target_language", referencedColumnName: "id", nullable: false)]
+    private ?Language $target_language = null;
 
     /**
      * @var Collection<int, Sources>
@@ -71,54 +62,6 @@ class Projects
     public function setName(string $name): static
     {
         $this->name = $name;
-
-        return $this;
-    }
-
-    public function getStartLanguage(): ?string
-    {
-        return $this->start_language;
-    }
-
-    public function setStartLanguage(string $start_language): static
-    {
-        $this->start_language = $start_language;
-
-        return $this;
-    }
-
-    public function getTargetLanguage(): ?string
-    {
-        return $this->target_language;
-    }
-
-    public function setTargetLanguage(string $target_language): static
-    {
-        $this->target_language = $target_language;
-
-        return $this;
-    }
-
-    public function getCreateDate(): ?\DateTimeInterface
-    {
-        return $this->create_date;
-    }
-
-    public function setCreateDate(\DateTimeInterface $create_date): static
-    {
-        $this->create_date = $create_date;
-
-        return $this;
-    }
-
-    public function getUpdateDate(): ?\DateTimeInterface
-    {
-        return $this->update_date;
-    }
-
-    public function setUpdateDate(\DateTimeInterface $update_date): static
-    {
-        $this->update_date = $update_date;
 
         return $this;
     }
@@ -181,6 +124,30 @@ class Projects
                 $source->setProject(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getStartLanguage(): ?Language
+    {
+        return $this->start_language;
+    }
+
+    public function setStartLanguage(?Language $start_language): static
+    {
+        $this->start_language = $start_language;
+
+        return $this;
+    }
+
+    public function getTargetLanguage(): ?Language
+    {
+        return $this->target_language;
+    }
+
+    public function setTargetLanguage(?Language $target_language): static
+    {
+        $this->target_language = $target_language;
 
         return $this;
     }
