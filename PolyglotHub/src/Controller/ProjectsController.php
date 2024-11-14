@@ -5,6 +5,8 @@ namespace App\Controller;
 use App\Entity\Projects;
 use App\Form\ProjectType;
 use App\Repository\ProjectsRepository;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -24,14 +26,15 @@ class ProjectsController extends AbstractController
     }
 
     #[Route('/new', name: 'app_projects_new')]
-    public function new(Request $request): Response
+    public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $projects = new Projects();
         $form = $this->createForm(ProjectType::class, $projects);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            // faire quelque chose
+            $entityManager->persist($projects);
+            $entityManager->flush();
         }
 
         return $this->render('projects/new.html.twig', [

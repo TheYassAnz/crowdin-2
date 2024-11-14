@@ -18,6 +18,9 @@
 </style>
 
 <div class="example-wrapper">
+    <div class="d-flex justify-content-between my-5">
+        <a href="{{ path('app_projects_new') }}" class="btn btn-primary">Créer un projet</a>
+    </div>
     <h1>Liste des projets: </h1>
     <ul class="list-group list-group-flush">
         {% for project in projects %}
