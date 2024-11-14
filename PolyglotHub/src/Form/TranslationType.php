@@ -2,6 +2,7 @@
 
 namespace App\Form;
 
+use App\Entity\Projects;
 use App\Entity\Sources;
 use App\Entity\Translations;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -15,16 +16,16 @@ class TranslationType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add(
-                'translatedContent',
-                TextareaType::class,
-                ['label' => 'Translated content']
-            )
-
             ->add('source', EntityType::class, [
                 'class' => Sources::class,
-                'choice_label' => 'name',
-            ]);
+                'choice_label' => 'content',
+                'label' => 'Source',
+            ])
+            ->add(
+                'translated_content',
+                TextareaType::class,
+                ['label' => 'Contenu traduit']
+            );
     }
 
     public function configureOptions(OptionsResolver $resolver): void
