@@ -38,6 +38,25 @@
 
                 <small class="text-muted">Créé par : {{ project.user.email }}</small>
             </div>
+            <div class="mt-3">
+                <h6>Sources liés :</h6>
+
+
+                <ul class="list-group">
+                    {% for source in project.sources %}
+                    <a href="{{ path('app_sources_show', {id: source.id}) }}" class="list-group-item list-group-item-action">
+
+
+                        <small>{{ source.cle }}</small>
+                        -
+                        <small>{{ source.content }}</small>
+
+                    </a>
+                    {% else %}
+                    <li class="list-group-item">Aucune source disponible</small></li>
+                    {% endfor %}
+                </ul>
+            </div>
         </div>
     </div>
     {% else %}
