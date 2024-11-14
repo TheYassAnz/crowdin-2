@@ -19,20 +19,18 @@ class ProjectType extends AbstractType
             ->add('name', TextType::class, [
                 'label' => 'Nom du projet',
             ])
-            ->add('start_language', EntityType::class, [
-                'class' => Language::class,
-                'choice_label' => 'name',
-                'label' => 'Language d\'origine',
-            ])
-            ->add('target_language', EntityType::class, [
-                'class' => Language::class,
-                'choice_label' => 'name',
-                'label' => 'Language cible',
-            ])
             ->add('user', EntityType::class, [
                 'class' => User::class,
                 'choice_label' => 'email',
                 'label' => 'Utilisateur',
+            ])
+            ->add('start_language', EntityType::class, [
+                'class' => Language::class,
+                'choice_label' => 'name',
+            ])
+            ->add('target_language', EntityType::class, [
+                'class' => Language::class,
+                'choice_label' => 'name',
             ])
         ;
     }
