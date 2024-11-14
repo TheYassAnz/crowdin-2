@@ -35,10 +35,19 @@ class ProjectsController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($projects);
             $entityManager->flush();
+            $this->redirectToRoute('app_projects');
         }
 
         return $this->render('projects/new.html.twig', [
             'form' => $form,
+        ]);
+    }
+
+    #[Route('/{id}', name: 'app_projects_show', requirements: ['id' => '\d+'], methods: ['GET'])]
+    public function show(?Projects $project): Response
+    {
+        return $this->render('projects/show.html.twig', [
+            'project' => $project,
         ]);
     }
 }

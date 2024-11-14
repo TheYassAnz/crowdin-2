@@ -16,24 +16,24 @@ class ProjectType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('name', TextType::class)
-            ->add('start_language')
-            ->add('target_language')
-            // ->add('create_date', null, [
-            //     'widget' => 'single_text',
-            // ])
-            // ->add('update_date', null, [
-            //     'widget' => 'single_text',
-            // ])
+            ->add('name', TextType::class, [
+                'label' => 'Nom du projet',
+            ])
+            ->add('start_language', EntityType::class, [
+                'class' => Language::class,
+                'choice_label' => 'name',
+                'label' => 'Language d\'origine',
+            ])
+            ->add('target_language', EntityType::class, [
+                'class' => Language::class,
+                'choice_label' => 'name',
+                'label' => 'Language cible',
+            ])
             ->add('user', EntityType::class, [
                 'class' => User::class,
-                'choice_label' => 'id',
+                'choice_label' => 'email',
+                'label' => 'Utilisateur',
             ])
-            // ->add('languages', EntityType::class, [
-            //     'class' => Language::class,
-            //     'choice_label' => 'id',
-            //     'multiple' => true,
-            // ])
         ;
     }
 
