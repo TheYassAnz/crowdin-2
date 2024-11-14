@@ -19,11 +19,13 @@ class Projects
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $start_language = null;
+    #[ORM\ManyToOne(targetEntity: Language::class)]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Language $start_language = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $target_language = null;
+    #[ORM\ManyToMany(targetEntity: Language::class)]
+    #[ORM\JoinTable(name: 'project_target_languages')]
+    private Collection $target_languages;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $create_date = null;
@@ -35,19 +37,12 @@ class Projects
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
-    #[ORM\ManyToMany(targetEntity: Language::class)]
-    #[ORM\JoinTable(name: 'project_language')]
-    private Collection $languages;
-
-    /**
-     * @var Collection<int, Sources>
-     */
     #[ORM\OneToMany(targetEntity: Sources::class, mappedBy: 'project')]
     private Collection $sources;
 
     public function __construct()
     {
-        $this->languages = new ArrayCollection();
+        $this->target_languages = new ArrayCollection();
         $this->sources = new ArrayCollection();
     }
 
@@ -75,26 +70,35 @@ class Projects
         return $this;
     }
 
-    public function getStartLanguage(): ?string
+    public function getStartLanguage(): ?Language
     {
         return $this->start_language;
     }
 
-    public function setStartLanguage(string $start_language): static
+    public function setStartLanguage(Language $start_language): static
     {
         $this->start_language = $start_language;
 
         return $this;
     }
 
-    public function getTargetLanguage(): ?string
+    public function getTargetLanguages(): Collection
     {
-        return $this->target_language;
+        return $this->target_languages;
     }
 
-    public function setTargetLanguage(string $target_language): static
+    public function addTargetLanguage(Language $targetLanguage): static
     {
-        $this->target_language = $target_language;
+        if (!$this->target_languages->contains($targetLanguage)) {
+            $this->target_languages[] = $targetLanguage;
+        }
+
+        return $this;
+    }
+
+    public function removeTargetLanguage(Language $targetLanguage): static
+    {
+        $this->target_languages->removeElement($targetLanguage);
 
         return $this;
     }
@@ -135,30 +139,6 @@ class Projects
         return $this;
     }
 
-    public function getLanguages(): Collection
-    {
-        return $this->languages;
-    }
-
-    public function addLanguage(Language $language): static
-    {
-        if (!$this->languages->contains($language)) {
-            $this->languages[] = $language;
-        }
-
-        return $this;
-    }
-
-    public function removeLanguage(Language $language): static
-    {
-        $this->languages->removeElement($language);
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Sources>
-     */
     public function getSources(): Collection
     {
         return $this->sources;
@@ -167,7 +147,7 @@ class Projects
     public function addSource(Sources $source): static
     {
         if (!$this->sources->contains($source)) {
-            $this->sources->add($source);
+            $this->sources[] = $source;
             $source->setProject($this);
         }
 
