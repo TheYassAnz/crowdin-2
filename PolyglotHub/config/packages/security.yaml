@@ -51,6 +51,9 @@ security:
     access_control:
         # - { path: ^/admin, roles: ROLE_ADMIN }
         - { path: ^/profile, roles: ROLE_USER }
+        - { path: ^/projects, roles: ROLE_USER }
+        - { path: ^/sources, roles: ROLE_USER }
+        - { path: ^/translations, roles: ROLE_USER }
 
 # Test-specific configuration
 when@test:
