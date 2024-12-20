@@ -36,7 +36,7 @@
                     </ul>
                 </div>
 
-                <small class="text-muted">Créé par : {{ project.user.email }}</small>
+                <a href={{ path('app_profile_show', {id: project.user.id}) }}><small class="text-muted">Créé par : {{ project.user.email }}</small></a>
             </div>
             <div class="mt-3">
                 <h6>Sources liés :</h6>

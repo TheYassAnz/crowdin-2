@@ -3,7 +3,9 @@
 namespace App\Controller;
 
 use App\Entity\Profil;
+use App\Entity\User;
 use App\Form\ProfileType;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,6 +25,22 @@ class ProfileController extends AbstractController
 
         return $this->render('profile/index.html.twig', parameters: [
             'user' => $user,
+        ]);
+    }
+
+    #[Route('/profile/{id}', name: 'profile_detail', requirements: ['id' => '\d+'])]
+    public function detail(int $id, UserRepository $userRepository): Response
+    {
+        $user = $userRepository->find($id);
+        $profil = $user->getProfil();
+
+        if (!$user) {
+            throw $this->createNotFoundException('User not found.');
+        }
+
+        return $this->render('profile/show.html.twig', [
+            'user' => $user,
+            'profil' => $profil,
         ]);
     }
 
