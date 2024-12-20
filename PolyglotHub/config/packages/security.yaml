@@ -54,6 +54,7 @@ security:
         - { path: ^/projects, roles: ROLE_USER }
         - { path: ^/sources, roles: ROLE_USER }
         - { path: ^/translations, roles: ROLE_USER }
+        - { path: ^/dashboard, roles: ROLE_USER }
 
 # Test-specific configuration
 when@test:
