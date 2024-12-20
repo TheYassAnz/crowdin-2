@@ -50,4 +50,19 @@ class ProjectsController extends AbstractController
             'project' => $project,
         ]);
     }
+
+    public function getProjectStats(ProjectsRepository $repository): array
+    {
+        $qb = $repository->createQueryBuilder('p')
+            ->select('p.start_language as language, COUNT(p.id) as count')
+            ->groupBy('p.start_language')
+            ->getQuery();
+        
+        $results = $qb->getResult();
+        
+        return [
+            'labels' => array_column($results, 'language'),
+            'data' => array_column($results, 'count'),
+        ];
+    }
 }
