@@ -16,6 +16,30 @@ class LanguageRepository extends ServiceEntityRepository
         parent::__construct($registry, Language::class);
     }
 
+    public function getLanguageStats(): array
+    {
+        try {
+            $qb = $this->createQueryBuilder('l')
+                ->select('l.name as language, COUNT(s.id) as count')
+                ->leftJoin('App\Entity\Sources', 's', 'WITH', 's.target_language = l.id')
+                ->groupBy('l.name')
+                ->orderBy('count', 'DESC')
+                ->getQuery();
+            
+            $results = $qb->getResult();
+            
+            return [
+                'labels' => array_column($results, 'language'),
+                'data' => array_column($results, 'count'),
+            ];
+        } catch (\Exception $e) {
+            return [
+                'labels' => [],
+                'data' => [],
+            ];
+        }
+    }
+
     //    /**
     //     * @return Language[] Returns an array of Language objects
     //     */

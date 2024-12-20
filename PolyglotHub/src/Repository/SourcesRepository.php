@@ -56,4 +56,32 @@ class SourcesRepository extends ServiceEntityRepository
             'data' => array_column($results, 'count'),
         ];
     }
+
+    public function getTranslationStats(): array
+    {
+        $qb = $this->createQueryBuilder('s')
+            ->select('DATE_FORMAT(t.created_at, \'%Y-%m-%d\') as date, COUNT(t.id) as count')
+            ->leftJoin('s.translations', 't')
+            ->where('t.created_at IS NOT NULL')
+            ->groupBy('date')
+            ->orderBy('date', 'ASC')
+            ->setMaxResults(6)
+            ->getQuery();
+        
+        try {
+            $results = $qb->getResult();
+
+            return [
+                'labels' => array_map(function($date) {
+                    return (new \DateTime($date['date']))->format('d M Y');
+                }, $results),
+                'data' => array_column($results, 'count'),
+            ];
+        } catch (\Exception $e) {
+            return [
+                'labels' => [],
+                'data' => [],
+            ];
+        }
+    }
 }
