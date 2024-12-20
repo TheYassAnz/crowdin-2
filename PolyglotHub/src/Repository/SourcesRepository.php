@@ -40,4 +40,20 @@ class SourcesRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+
+    public function getSourceStats(): array
+    {
+        $qb = $this->createQueryBuilder('s')
+            ->select('p.name as project, COUNT(s.id) as count')
+            ->leftJoin('s.project', 'p')
+            ->groupBy('p.name')
+            ->getQuery();
+        
+        $results = $qb->getResult();
+        
+        return [
+            'labels' => array_column($results, 'project'),
+            'data' => array_column($results, 'count'),
+        ];
+    }
 }

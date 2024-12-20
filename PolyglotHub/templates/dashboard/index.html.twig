@@ -1,0 +1,68 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <h1>Dashboard</h1>
+    
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    Projects Statistics
+                </div>
+                <div class="card-body">
+                    <canvas id="projectsChart"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    Sources Statistics
+                </div>
+                <div class="card-body">
+                    <canvas id="sourcesChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script type="module">
+    import Chart from 'chart.js/auto';
+    
+    new Chart(document.getElementById('projectsChart'), {
+        type: 'bar',
+        data: {
+            labels: {{ projectStats.labels|json_encode|raw }},
+            datasets: [{
+                label: 'Projects by Language',
+                data: {{ projectStats.data|json_encode|raw }},
+                backgroundColor: 'rgba(54, 162, 235, 0.5)'
+            }]
+        }
+    });
+    
+    new Chart(document.getElementById('sourcesChart'), {
+        type: 'pie',
+        data: {
+            labels: {{ sourceStats.labels|json_encode|raw }},
+            datasets: [{
+                data: {{ sourceStats.data|json_encode|raw }},
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.5)',
+                    'rgba(54, 162, 235, 0.5)',
+                    'rgba(255, 206, 86, 0.5)',
+                    'rgba(75, 192, 192, 0.5)'
+                ]
+            }]
+        }
+    });
+</script>
+{% endblock %}
