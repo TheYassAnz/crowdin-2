@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20241219101608 extends AbstractMigration
+final class Version20241220172303 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -26,7 +26,7 @@ final class Version20241219101608 extends AbstractMigration
         $this->addSql('CREATE TABLE sources (id INT AUTO_INCREMENT NOT NULL, content VARCHAR(255) NOT NULL, cle VARCHAR(255) NOT NULL, project_id INT NOT NULL, INDEX IDX_D25D65F2166D1F9C (project_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4');
         $this->addSql('CREATE TABLE source_language (sources_id INT NOT NULL, language_id INT NOT NULL, INDEX IDX_97FB4767DD51D0F7 (sources_id), INDEX IDX_97FB476782F1BAF4 (language_id), PRIMARY KEY(sources_id, language_id)) DEFAULT CHARACTER SET utf8mb4');
         $this->addSql('CREATE TABLE translations (id INT AUTO_INCREMENT NOT NULL, translated_content VARCHAR(255) NOT NULL, source_id INT NOT NULL, INDEX IDX_C6B7DA87953C1C61 (source_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4');
-        $this->addSql('CREATE TABLE user (id INT AUTO_INCREMENT NOT NULL, email VARCHAR(255) NOT NULL, roles JSON NOT NULL, password VARCHAR(255) NOT NULL, is_verified TINYINT(1) NOT NULL, create_date DATETIME NOT NULL, update_date DATETIME NOT NULL, verification_token VARCHAR(255) DEFAULT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4');
+        $this->addSql('CREATE TABLE user (id INT AUTO_INCREMENT NOT NULL, email VARCHAR(255) NOT NULL, roles JSON NOT NULL, password VARCHAR(255) NOT NULL, is_verified TINYINT(1) NOT NULL, create_date DATETIME NOT NULL, update_date DATETIME DEFAULT NULL, verification_token VARCHAR(255) DEFAULT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4');
         $this->addSql('ALTER TABLE profil ADD CONSTRAINT FK_E6D6B297C08E2885 FOREIGN KEY (preferred_language_id) REFERENCES language (id)');
         $this->addSql('ALTER TABLE profil ADD CONSTRAINT FK_E6D6B297A76ED395 FOREIGN KEY (user_id) REFERENCES user (id)');
         $this->addSql('ALTER TABLE projects ADD CONSTRAINT FK_5C93B3A4A76ED395 FOREIGN KEY (user_id) REFERENCES user (id)');

@@ -38,7 +38,6 @@ class Projects
 
     public function __construct()
     {
-        $this->languages = new ArrayCollection();
         $this->sources = new ArrayCollection();
     }
 
@@ -78,26 +77,6 @@ class Projects
         return $this;
     }
 
-    public function getLanguages(): Collection
-    {
-        return $this->languages;
-    }
-
-    public function addLanguage(Language $language): static
-    {
-        if (!$this->languages->contains($language)) {
-            $this->languages[] = $language;
-        }
-
-        return $this;
-    }
-
-    public function removeLanguage(Language $language): static
-    {
-        $this->languages->removeElement($language);
-
-        return $this;
-    }
 
     /**
      * @return Collection<int, Sources>
