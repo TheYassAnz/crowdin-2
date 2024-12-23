@@ -18,12 +18,6 @@ class Profil
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $description = null;
 
-    #[ORM\OneToOne(targetEntity: Language::class)]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Language $preferred_language = null;
-
-    private Collection $languages;
-
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
@@ -39,7 +33,6 @@ class Profil
 
     public function __construct()
     {
-        $this->languages = new ArrayCollection();
         $this->favorite_languages = new ArrayCollection();
     }
 
@@ -62,17 +55,6 @@ class Profil
     public function setDescription(?string $description): static
     {
         $this->description = $description;
-        return $this;
-    }
-
-    public function getPreferredLanguage(): ?Language
-    {
-        return $this->preferred_language;
-    }
-
-    public function setPreferredLanguage(Language $preferred_language): static
-    {
-        $this->preferred_language = $preferred_language;
         return $this;
     }
 
