@@ -28,7 +28,7 @@ class ProfileController extends AbstractController
         ]);
     }
 
-    #[Route('/profile/{id}', name: 'profile_detail', requirements: ['id' => '\d+'])]
+    #[Route('/profile/{id}', name: 'app_profile_show', requirements: ['id' => '\d+'])]
     public function detail(int $id, UserRepository $userRepository): Response
     {
         $user = $userRepository->find($id);
