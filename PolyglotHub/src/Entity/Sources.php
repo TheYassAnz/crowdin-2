@@ -41,11 +41,15 @@ class Sources
     #[ORM\JoinTable(name: 'source_language')]
     private Collection $languages;
 
+    #[ORM\Column(type: 'datetime', nullable: true, options: ['default' => 'CURRENT_TIMESTAMP'])]
+    private ?\DateTimeInterface $createDate = null;
+
     public function __construct()
     {
         $this->translations = new ArrayCollection();
         $this->test = new ArrayCollection();
         $this->languages = new ArrayCollection();
+        $this->createDate = new \DateTime();
     }
 
     public function getId(): ?int
@@ -137,6 +141,17 @@ class Sources
                 $test->setSource(null);
             }
         }
+        return $this;
+    }
+
+    public function getCreateDate(): ?\DateTimeInterface
+    {
+        return $this->createDate;
+    }
+
+    public function setCreateDate(\DateTimeInterface $createDate): self
+    {
+        $this->createDate = $createDate;
         return $this;
     }
 }

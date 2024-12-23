@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Import Sources{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <h1>Import Sources</h1>
+    
+    {{ form_start(form) }}
+        <div class="mb-3">
+            {{ form_row(form.file, {'attr': {'class': 'form-control'}}) }}
+        </div>
+        <div class="mb-3">
+            {{ form_row(form.project, {'attr': {'class': 'form-control'}}) }}
+        </div>
+        <button type="submit" class="btn btn-primary">Import</button>
+    {{ form_end(form) }}
+</div>
+{% endblock %}

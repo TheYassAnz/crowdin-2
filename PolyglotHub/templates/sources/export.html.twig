@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Export Sources{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <h1>Export Sources</h1>
+    
+    <div class="alert alert-info">
+        Click the button below to download all sources as CSV file.
+    </div>
+    
+    <form action="{{ path('app_sources_export_csv') }}" method="GET">
+        <button type="submit" class="btn btn-primary">Export to CSV</button>
+        <a href="{{ path('app_sources') }}" class="btn btn-secondary">Back to list</a>
+    </form>
+</div>
+{% endblock %}

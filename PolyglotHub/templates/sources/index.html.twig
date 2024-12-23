@@ -8,10 +8,15 @@
     .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
 </style>
 
-<div class="example-wrapper">
-    <div class="d-flex justify-content-between my-5">
-        <a href="{{ path('app_sources_new') }}" class="btn btn-primary">Créer une source</a>
+<div class="container mt-4">
+    <h1>Sources</h1>
+    
+    <div class="mb-3">
+        <a href="{{ path('app_sources_new') }}" class="btn btn-primary">Create New</a>
+        <a href="{{ path('app_sources_import_csv') }}" class="btn btn-success">Import CSV</a>
+        <a href="{{ path('app_sources_export_csv') }}" class="btn btn-info">Export CSV</a>
     </div>
+
     <h1>Liste des sources: </h1>
     <div class="list-group">
         {% for source in sources %}

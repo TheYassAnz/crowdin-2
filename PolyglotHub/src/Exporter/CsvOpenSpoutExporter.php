@@ -5,15 +5,14 @@ namespace App\Exporter;
 use OpenSpout\Common\Entity\Row;
 use OpenSpout\Common\Entity\Style\Style;
 use App\Enum\CsvFormat;
-use App\Exporter\CsvWriterFactory;
-use App\Factory\CsvWriterFactory as FactoryCsvWriterFactory;
+use App\Exporter\ExporterInterface;
+use App\Factory\CsvWriterFactory;
 
 class CsvOpenSpoutExporter implements ExporterInterface
 {
-    public function __construct(private readonly FactoryCsvWriterFactory $factory)
+    public function __construct(private readonly CsvWriterFactory $factory)
     {
     }
-
 
     public function export(array $columnNames, array $data, CsvFormat $format): \SplFileInfo
     {
@@ -25,9 +24,8 @@ class CsvOpenSpoutExporter implements ExporterInterface
         }
 
         $writer = $this->factory->fromCsvFormat($format);
-
-        $writer-> opentoBrowser($filePath);
-        $writer-> addRows($rows);
+        $writer->openToBrowser($filePath);
+        $writer->addRows($rows);
         $writer->close();
 
         return new \SplFileInfo($filePath);
