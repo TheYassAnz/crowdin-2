@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Projects;
 use App\Form\ProjectType;
 use App\Repository\ProjectsRepository;
+use App\Service\NotificationService;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -15,6 +16,10 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/projects')]
 class ProjectsController extends AbstractController
 {
+    public function __construct(
+        private NotificationService $notificationService
+    ) {}
+
     #[Route('', name: 'app_projects')]
     public function index(ProjectsRepository $repository): Response
     {
@@ -35,6 +40,11 @@ class ProjectsController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($projects);
             $entityManager->flush();
+
+            // envoyé notification
+            $this->notificationService->sendProjectCreationNotification($projects);
+
+            $this->addFlash('success', 'Project created successfully! Check your email for details.');
             return $this->redirectToRoute('app_projects');
         }
 

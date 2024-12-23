@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Sources;
 use App\Form\SourceType;
 use App\Repository\SourcesRepository;
+use App\Service\NotificationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -14,6 +15,10 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/sources')]
 class SourcesController extends AbstractController
 {
+    public function __construct(
+        private NotificationService $notificationService
+    ) {}
+
     #[Route('', name: 'app_sources')]
     function index(SourcesRepository $repository): Response
     {
@@ -33,6 +38,11 @@ class SourcesController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($source);
             $entityManager->flush();
+
+            // envoyé notification
+            $this->notificationService->sendSourceCreationNotification($source);
+
+            $this->addFlash('success', 'Source created successfully! Check your email for details.');
             return $this->redirectToRoute('app_sources');
         }
 
