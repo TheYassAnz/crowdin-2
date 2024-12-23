@@ -7,7 +7,6 @@ use App\Entity\Projects;
 use App\Entity\User;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -16,7 +15,7 @@ class ProjectType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('name', TextType::class, [
+            ->add('name', null, [
                 'label' => 'Nom du projet',
             ])
             ->add('user', EntityType::class, [
@@ -27,10 +26,13 @@ class ProjectType extends AbstractType
             ->add('start_language', EntityType::class, [
                 'class' => Language::class,
                 'choice_label' => 'name',
+                'label' => 'Langue source',
             ])
-            ->add('target_language', EntityType::class, [
+            ->add('target_languages', EntityType::class, [
                 'class' => Language::class,
                 'choice_label' => 'name',
+                'multiple' => true,
+                'label' => 'Langues cibles',
             ])
         ;
     }

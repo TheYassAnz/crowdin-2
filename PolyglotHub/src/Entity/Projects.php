@@ -26,19 +26,22 @@ class Projects
     #[ORM\JoinColumn(name: "start_language", referencedColumnName: "id", nullable: false)]
     private ?Language $start_language = null;
 
-    #[ORM\ManyToOne(targetEntity: Language::class)]
-    #[ORM\JoinColumn(name: "target_language", referencedColumnName: "id", nullable: false)]
-    private ?Language $target_language = null;
-
     /**
      * @var Collection<int, Sources>
      */
     #[ORM\OneToMany(targetEntity: Sources::class, mappedBy: 'project')]
     private Collection $sources;
 
+    /**
+     * @var Collection<int, Language>
+     */
+    #[ORM\ManyToMany(targetEntity: Language::class)]
+    private Collection $target_languages;
+
     public function __construct()
     {
         $this->sources = new ArrayCollection();
+        $this->target_languages = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -107,6 +110,7 @@ class Projects
         return $this;
     }
 
+
     public function getStartLanguage(): ?Language
     {
         return $this->start_language;
@@ -119,14 +123,28 @@ class Projects
         return $this;
     }
 
-    public function getTargetLanguage(): ?Language
+
+
+    /**
+     * @return Collection<int, Language>
+     */
+    public function getTargetLanguages(): Collection
     {
-        return $this->target_language;
+        return $this->target_languages;
     }
 
-    public function setTargetLanguage(?Language $target_language): static
+    public function addTargetLanguage(Language $targetLanguage): static
     {
-        $this->target_language = $target_language;
+        if (!$this->target_languages->contains($targetLanguage)) {
+            $this->target_languages->add($targetLanguage);
+        }
+
+        return $this;
+    }
+
+    public function removeTargetLanguage(Language $targetLanguage): static
+    {
+        $this->target_languages->removeElement($targetLanguage);
 
         return $this;
     }

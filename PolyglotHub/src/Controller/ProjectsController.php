@@ -57,9 +57,9 @@ class ProjectsController extends AbstractController
             ->select('p.start_language as language, COUNT(p.id) as count')
             ->groupBy('p.start_language')
             ->getQuery();
-        
+
         $results = $qb->getResult();
-        
+
         return [
             'labels' => array_column($results, 'language'),
             'data' => array_column($results, 'count'),
