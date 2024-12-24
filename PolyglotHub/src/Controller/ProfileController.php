@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Profil;
 use App\Entity\User;
 use App\Form\ProfileType;
+use App\Repository\ProfilRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -29,10 +30,11 @@ class ProfileController extends AbstractController
     }
 
     #[Route('/profile/{id}', name: 'app_profile_show', requirements: ['id' => '\d+'])]
-    public function detail(int $id, UserRepository $userRepository): Response
+    public function detail(int $id, UserRepository $userRepository, ProfilRepository $profileRepository, EntityManagerInterface $entityManager): Response
     {
-        $user = $userRepository->find($id);
-        $profil = $user->getProfil();
+        $user = $userRepository->find(id: $id);
+        $profil = $entityManager->getRepository(Profil::class)->findOneBy(['user' => $user]);
+
 
         if (!$user) {
             throw $this->createNotFoundException('User not found.');
