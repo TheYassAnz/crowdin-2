@@ -34,7 +34,7 @@ class ProjectsController extends AbstractController
     {
         $projects = new Projects();
         $projects->setUser($this->getUser()); // Set current user before form creation
-        
+
         $form = $this->createForm(ProjectType::class, $projects);
 
         $form->handleRequest($request);
@@ -69,7 +69,7 @@ class ProjectsController extends AbstractController
             throw $this->createAccessDeniedException('You can only delete your own projects.');
         }
 
-        if ($this->isCsrfTokenValid('delete'.$project->getId(), $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $project->getId(), $request->request->get('_token'))) {
             $entityManager->remove($project);
             $entityManager->flush();
             $this->addFlash('success', 'Project deleted successfully.');
@@ -87,13 +87,13 @@ class ProjectsController extends AbstractController
 
         $response = new Response();
         $response->headers->set('Content-Type', 'text/csv');
-        $response->headers->set('Content-Disposition', 'attachment; filename="project_'.$project->getId().'.csv"');
-        
+        $response->headers->set('Content-Disposition', 'attachment; filename="project_' . $project->getId() . '.csv"');
+
         $output = fopen('php://temp', 'r+');
-        
+
         // Headers
         fputcsv($output, ['Key', 'Content', 'Project']);
-        
+
         // Data
         foreach ($project->getSources() as $source) {
             fputcsv($output, [
@@ -102,11 +102,11 @@ class ProjectsController extends AbstractController
                 $project->getName()
             ]);
         }
-        
+
         rewind($output);
         $content = stream_get_contents($output);
         fclose($output);
-        
+
         $response->setContent($content);
         return $response;
     }
