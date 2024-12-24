@@ -18,14 +18,17 @@ class SourceType extends AbstractType
         $builder
             ->add('cle', TextType::class, [
                 'label' => 'Clé',
+                'attr' => ['placeholder' => 'Veuillez entrer une clé'],
             ])
             ->add('content', TextareaType::class, [
                 'label' => 'Contenu',
+                'attr' => ['placeholder' => 'Veuillez entrer un contenu'],
             ])
             ->add('project', EntityType::class, [
                 'class' => Projects::class,
                 'choice_label' => 'name',
                 'label' => 'Projet lié',
+                'placeholder' => 'Choisir un projet',
             ])
         ;
     }
