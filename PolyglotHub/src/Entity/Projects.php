@@ -26,10 +26,6 @@ class Projects
     #[ORM\JoinColumn(name: "start_language", referencedColumnName: "id", nullable: false)]
     private ?Language $start_language = null;
 
-    #[ORM\ManyToOne(targetEntity: Language::class)]
-    #[ORM\JoinColumn(name: "target_language", referencedColumnName: "id", nullable: false)]
-    private ?Language $target_language = null;
-
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(nullable: true)]
     private ?User $collaborator = null;
