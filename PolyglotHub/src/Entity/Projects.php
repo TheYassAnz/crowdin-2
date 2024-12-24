@@ -30,6 +30,10 @@ class Projects
     #[ORM\JoinColumn(name: "target_language", referencedColumnName: "id", nullable: false)]
     private ?Language $target_language = null;
 
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?User $collaborator = null;
+
     /**
      * @var Collection<int, Sources>
      */
@@ -77,6 +81,16 @@ class Projects
         return $this;
     }
 
+    public function getCollaborator(): ?User
+    {
+        return $this->collaborator;
+    }
+
+    public function setCollaborator(?User $collaborator): static
+    {
+        $this->collaborator = $collaborator;
+        return $this;
+    }
 
     /**
      * @return Collection<int, Sources>

@@ -6,7 +6,6 @@ use App\Entity\Projects;
 use App\Form\ProjectType;
 use App\Repository\ProjectsRepository;
 use App\Service\NotificationService;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -34,6 +33,8 @@ class ProjectsController extends AbstractController
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $projects = new Projects();
+        $projects->setUser($this->getUser()); // Set current user before form creation
+        
         $form = $this->createForm(ProjectType::class, $projects);
 
         $form->handleRequest($request);
