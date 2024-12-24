@@ -24,6 +24,7 @@ class ProjectType extends AbstractType
         $builder
             ->add('name', null, [
                 'label' => 'Nom du projet',
+                'attr' => ['placeholder' => 'Veuillez entrer un nom du projet'],
             ])
             ->add('user', EntityType::class, [
                 'class' => User::class,
@@ -36,6 +37,7 @@ class ProjectType extends AbstractType
                 'class' => User::class,
                 'choice_label' => 'email',
                 'label' => 'Collaborateur',
+                'placeholder' => 'Choisir un collaborateur',
                 'required' => false,
                 // 'mapped' => false,
             ])
@@ -43,6 +45,7 @@ class ProjectType extends AbstractType
                 'class' => Language::class,
                 'choice_label' => 'name',
                 'label' => 'Langue source',
+                'placeholder' => 'Choisir une langue',
             ])
             ->add('target_languages', EntityType::class, [
                 'class' => Language::class,

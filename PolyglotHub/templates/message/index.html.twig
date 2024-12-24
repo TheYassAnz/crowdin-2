@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Messages{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <h1>Messages</h1>
+        
+        <div class="list-group">
+            {% for message in messages %}
+                <div class="list-group-item {% if not message.isRead %}fw-bold{% endif %}">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h5 class="mb-1">From: {{ message.sender.fullName }}</h5>
+                        <small>{{ message.createdAt|date('Y-m-d H:i:s') }}</small>
+                    </div>
+                    <p class="mb-1">{{ message.content }}</p>
+                    <small>
+                        <a href="{{ path('app_messages_new', {'recipientId': message.sender.id}) }}" class="btn btn-sm btn-primary">Reply</a>
+                    </small>
+                </div>
+            {% else %}
+                <div class="alert alert-info">Inbox empty.</div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

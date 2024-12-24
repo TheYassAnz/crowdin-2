@@ -53,13 +53,11 @@
 					<div class="d-flex justify-content-between align-items-center">
 						<div>
 							<h5 class="mb-1">{{ project.name }}</h5>
-							<small class="text-muted">Created by:
-								{{ project.user.email }}</small>
+							<small class="text-muted">Created by: {{ project.user.firstname }} {{ project.user.lastname }}</small>
 							{% if project.collaborator is not null %}
 								<div>
 									<a href={{ path('app_profile_show', {id: project.collaborator.id} ) }}>
-										<small class="text-muted">Collaborateur :
-											{{ project.collaborator.email }}</small>
+										<small class="text-muted">Collaborateur : {{ project.collaborator.firstname }} {{ project.collaborator.lastname }}</small>
 									</a>
 								</div>
 							{% endif %}

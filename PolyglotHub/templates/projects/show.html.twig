@@ -39,9 +39,13 @@
                 </div>
 
                 <div class="text-end">
-                    <div><a href={{ path('app_profile_show', {id: project.user.id}) }}><small class="text-muted">Créé par : {{ project.user.email }}</small></a></div>
+                    <div><a href={{ path('app_profile_show', {id: project.user.id}) }}>
+                        <small class="text-muted">Créé par : {{ project.user.firstname }} {{ project.user.lastname }}</small>
+                    </a></div>
                     {% if project.collaborator is not null %}
-                        <div><a href={{ path('app_profile_show', {id: project.collaborator.id}) }}><small class="text-muted">Collaborateur : {{ project.collaborator.email }}</small></a></div>
+                        <div><a href={{ path('app_profile_show', {id: project.collaborator.id}) }}>
+                            <small class="text-muted">Collaborateur : {{ project.collaborator.firstname }} {{ project.collaborator.lastname }}</small>
+                        </a></div>
                     {% endif %}
                 </div>
             </div>
