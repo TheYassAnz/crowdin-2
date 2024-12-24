@@ -29,16 +29,9 @@ class RegistrationFormType extends AbstractType
                 ],
                 'expanded' => true,
                 'multiple' => true,
-                'label' => 'Who are you ?',
+                'label' => 'Translator / Project Manager',
             ])
-            ->add('agreeTerms', CheckboxType::class, [
-                'mapped' => false,
-                'constraints' => [
-                    new IsTrue([
-                        'message' => 'You should agree to our terms.',
-                    ]),
-                ],
-            ])
+
             ->add('plainPassword', PasswordType::class, [
                 'mapped' => false,
                 'attr' => ['autocomplete' => 'new-password'],
@@ -53,8 +46,21 @@ class RegistrationFormType extends AbstractType
                         'max' => 4096,
                     ]),
                 ],
+
             ])
-            ->add('save', SubmitType::class, ['label' => 'Submit'])
+            ->add('agreeTerms', CheckboxType::class, [
+                'mapped' => false,
+                'constraints' => [
+                    new IsTrue([
+                        'message' => 'You should agree to our terms.',
+                    ]),
+                ],
+                'label' => 'I agree to the terms',
+            ])
+            ->add('save', SubmitType::class, [
+                'label' => 'Create Account',
+                'attr' => ['class' => 'btn btn-success'],
+            ])
         ;
     }
 
