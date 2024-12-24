@@ -16,18 +16,6 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class ProfileController extends AbstractController
 {
-    #[Route('/profile', name: 'app_profile')]
-    public function index(): Response
-    {
-        $user = $this->getUser();
-        if (!$user instanceof UserInterface) {
-            return $this->redirectToRoute('app_login');
-        }
-
-        return $this->render('profile/index.html.twig', parameters: [
-            'user' => $user,
-        ]);
-    }
 
     #[Route('/profile/{id}', name: 'app_profile_show', requirements: ['id' => '\d+'])]
     public function detail(int $id, UserRepository $userRepository, ProfilRepository $profileRepository, EntityManagerInterface $entityManager): Response
