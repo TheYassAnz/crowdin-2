@@ -61,6 +61,22 @@ class ProjectsController extends AbstractController
         ]);
     }
 
+    #[Route('/{id}/delete', name: 'app_projects_delete', methods: ['POST'])]
+    public function delete(Request $request, Projects $project, EntityManagerInterface $entityManager): Response
+    {
+        if ($project->getUser() !== $this->getUser()) {
+            throw $this->createAccessDeniedException('You can only delete your own projects.');
+        }
+
+        if ($this->isCsrfTokenValid('delete'.$project->getId(), $request->request->get('_token'))) {
+            $entityManager->remove($project);
+            $entityManager->flush();
+            $this->addFlash('success', 'Project deleted successfully.');
+        }
+
+        return $this->redirectToRoute('app_projects');
+    }
+
     public function getProjectStats(ProjectsRepository $repository): array
     {
         $qb = $repository->createQueryBuilder('p')

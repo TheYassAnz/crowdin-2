@@ -118,4 +118,21 @@ class SourcesController extends AbstractController
         $response->setContent($content);
         return $response;
     }
+
+    #[Route('/{id}/delete', name: 'app_sources_delete', methods: ['POST'])]
+    public function delete(Request $request, Sources $source, EntityManagerInterface $entityManager): Response
+    {
+        // Check if user owns the source through project
+        if ($source->getProject()->getUser() !== $this->getUser()) {
+            throw $this->createAccessDeniedException('You can only delete your own sources.');
+        }
+
+        if ($this->isCsrfTokenValid('delete'.$source->getId(), $request->request->get('_token'))) {
+            $entityManager->remove($source);
+            $entityManager->flush();
+            $this->addFlash('success', 'Source deleted successfully.');
+        }
+
+        return $this->redirectToRoute('app_sources');
+    }
 }
