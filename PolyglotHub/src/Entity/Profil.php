@@ -18,19 +18,22 @@ class Profil
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $description = null;
 
-    #[ORM\OneToOne(targetEntity: Language::class)]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Language $preferred_language = null;
-
-    private Collection $languages;
-
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
+    /**
+     * @var Collection<int, Language>
+     */
+    #[ORM\ManyToMany(targetEntity: Language::class)]
+    private Collection $favorite_languages;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $picture = null;
+
     public function __construct()
     {
-        $this->languages = new ArrayCollection();
+        $this->favorite_languages = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -55,17 +58,6 @@ class Profil
         return $this;
     }
 
-    public function getPreferredLanguage(): ?Language
-    {
-        return $this->preferred_language;
-    }
-
-    public function setPreferredLanguage(Language $preferred_language): static
-    {
-        $this->preferred_language = $preferred_language;
-        return $this;
-    }
-
     public function getUser(): ?User
     {
         return $this->user;
@@ -74,6 +66,42 @@ class Profil
     public function setUser(User $user): static
     {
         $this->user = $user;
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Language>
+     */
+    public function getFavoriteLanguages(): Collection
+    {
+        return $this->favorite_languages;
+    }
+
+    public function addFavoriteLanguage(Language $favoriteLanguage): static
+    {
+        if (!$this->favorite_languages->contains($favoriteLanguage)) {
+            $this->favorite_languages->add($favoriteLanguage);
+        }
+
+        return $this;
+    }
+
+    public function removeFavoriteLanguage(Language $favoriteLanguage): static
+    {
+        $this->favorite_languages->removeElement($favoriteLanguage);
+
+        return $this;
+    }
+
+    public function getPicture(): ?string
+    {
+        return $this->picture;
+    }
+
+    public function setPicture(?string $picture): static
+    {
+        $this->picture = $picture;
+
         return $this;
     }
 }

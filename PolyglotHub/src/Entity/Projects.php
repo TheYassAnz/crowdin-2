@@ -40,9 +40,16 @@ class Projects
     #[ORM\OneToMany(mappedBy: 'project', targetEntity: Sources::class, cascade: ['persist', 'remove'])]
     private Collection $sources;
 
+    /**
+     * @var Collection<int, Language>
+     */
+    #[ORM\ManyToMany(targetEntity: Language::class)]
+    private Collection $target_languages;
+
     public function __construct()
     {
         $this->sources = new ArrayCollection();
+        $this->target_languages = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -121,6 +128,7 @@ class Projects
         return $this;
     }
 
+
     public function getStartLanguage(): ?Language
     {
         return $this->start_language;
@@ -133,14 +141,28 @@ class Projects
         return $this;
     }
 
-    public function getTargetLanguage(): ?Language
+
+
+    /**
+     * @return Collection<int, Language>
+     */
+    public function getTargetLanguages(): Collection
     {
-        return $this->target_language;
+        return $this->target_languages;
     }
 
-    public function setTargetLanguage(?Language $target_language): static
+    public function addTargetLanguage(Language $targetLanguage): static
     {
-        $this->target_language = $target_language;
+        if (!$this->target_languages->contains($targetLanguage)) {
+            $this->target_languages->add($targetLanguage);
+        }
+
+        return $this;
+    }
+
+    public function removeTargetLanguage(Language $targetLanguage): static
+    {
+        $this->target_languages->removeElement($targetLanguage);
 
         return $this;
     }
