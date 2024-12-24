@@ -5,31 +5,34 @@
 {% block stylesheets %}
     {{ parent() }}
     <style>
-        .list-item {
+        .list-group-item {
             position: relative;
-            transition: all 0.3s ease;
+            overflow: hidden;
+            padding: 1.5rem;
         }
         
         .action-buttons {
             position: absolute;
-            right: -100px;
+            right: -150px;
             top: 50%;
             transform: translateY(-50%);
-            background: #f8f9fa;
-            padding: 0.5rem;
-            border-radius: 4px;
-            box-shadow: -2px 0 5px rgba(0,0,0,0.1);
-            transition: right 0.3s ease;
+            background: linear-gradient(to left, #fff 80%, rgba(255,255,255,0.9));
+            padding: 1rem;
             display: flex;
             gap: 0.5rem;
+            opacity: 0;
         }
-        
-        .list-group-item:hover .action-buttons {
-            right: 1rem;
+
+        .list-group-item:hover {
+            background-color: #f8f9fa;
         }
-        
-        .list-group-item {
-            overflow: hidden;
+
+        .project-content {
+            transition: transform 0.3s ease;
+        }
+
+        .list-group-item:hover .project-content {
+            transform: translateX(-100px);
         }
     </style>
 {% endblock %}
@@ -45,34 +48,30 @@
     <div class="list-group">
         {% for project in projects %}
             <div class="list-group-item">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <a href="{{ path('app_projects_show', {id: project.id}) }}" class="text-decoration-none">
-                            <h5 class="mb-1">{{ project.name }}</h5>
-                        </a>
-                        <small class="text-muted">Created by: {{ project.user.email }}</small>
-                        <div class="mt-2">
-                            <small class="text-muted">Start Language: {{ project.startLanguage.name }}</small><br>
-                            <small class="text-muted">Target Language: {{ project.targetLanguage.name }}</small>
-                        </div>
+                <div class="project-content">
+                    <h5 class="mb-1">{{ project.name }}</h5>
+                    <small class="text-muted">Created by: {{ project.user.email }}</small>
+                    <div class="mt-2">
+                        <small class="text-muted">Start Language: {{ project.startLanguage.name }}</small><br>
+                        <small class="text-muted">Target Language: {{ project.targetLanguage.name }}</small>
                     </div>
-                    
-                    <div class="action-buttons">
-                        <a href="{{ path('app_projects_show', {id: project.id}) }}" class="btn btn-info btn-sm">
-                            <i class="fas fa-eye"></i>
+                </div>
+                
+                <div class="action-buttons">
+                    <a href="{{ path('app_projects_show', {id: project.id}) }}" class="btn btn-info btn-sm">
+                        <i class="fas fa-eye"></i>
+                    </a>
+                    {% if project.user == app.user %}
+                        <a href="#" class="btn btn-success btn-sm">
+                            <i class="fas fa-file-export"></i>
                         </a>
-                        {% if project.user == app.user %}
-                            <a href="#" class="btn btn-success btn-sm">
-                                <i class="fas fa-file-export"></i>
-                            </a>
-                            <a href="#" class="btn btn-warning btn-sm">
-                                <i class="fas fa-edit"></i>
-                            </a>
-                            <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteProjectModal{{ project.id }}">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        {% endif %}
-                    </div>
+                        <a href="#" class="btn btn-warning btn-sm">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteProjectModal{{ project.id }}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    {% endif %}
                 </div>
             </div>
             
@@ -104,4 +103,45 @@
         {% endfor %}
     </div>
 </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initial animation
+            gsap.from('.list-group-item', {
+                duration: 0.5,
+                opacity: 0,
+                y: 30,
+                stagger: 0.1,
+                ease: 'power2.out'
+            });
+
+            // Hover animations
+            document.querySelectorAll('.list-group-item').forEach(item => {
+                const buttons = item.querySelector('.action-buttons');
+                const timeline = gsap.timeline({ paused: true });
+                
+                timeline
+                    .to(buttons, {
+                        duration: 0.3,
+                        right: '1rem',
+                        opacity: 1,
+                        ease: 'power2.out'
+                    })
+                    .from(buttons.children, {
+                        duration: 0.2,
+                        opacity: 0,
+                        x: 20,
+                        stagger: 0.05,
+                        ease: 'power2.out'
+                    }, '-=0.1');
+
+                item.addEventListener('mouseenter', () => timeline.play());
+                item.addEventListener('mouseleave', () => timeline.reverse());
+            });
+        });
+    </script>
 {% endblock %}
