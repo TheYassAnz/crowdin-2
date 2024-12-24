@@ -33,7 +33,7 @@ class Projects
     /**
      * @var Collection<int, Sources>
      */
-    #[ORM\OneToMany(targetEntity: Sources::class, mappedBy: 'project')]
+    #[ORM\OneToMany(mappedBy: 'project', targetEntity: Sources::class, cascade: ['persist', 'remove'])]
     private Collection $sources;
 
     public function __construct()

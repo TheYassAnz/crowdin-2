@@ -35,9 +35,9 @@ class CsvImportType extends AbstractType
                 'choice_label' => 'name',
                 'label' => 'Project'
             ])
-            ->add('submit', SubmitType::class, [
-                'label' => 'Import'
-            ])
+            //->add('submit', SubmitType::class, [
+            //    'label' => 'Import'
+            //])
         ;
     }
 }
