@@ -16,11 +16,12 @@
             right: -150px;
             top: 50%;
             transform: translateY(-50%);
-            background: linear-gradient(to left, #fff 80%, rgba(255,255,255,0.9));
-            padding: 1rem;
             display: flex;
             gap: 0.5rem;
-            opacity: 0;
+            padding: 0.5rem;
+            background: white;
+            border-radius: 4px;
+            box-shadow: -2px 0 5px rgba(0,0,0,0.1);
         }
 
         .list-group-item:hover {
@@ -48,30 +49,32 @@
     <div class="list-group">
         {% for project in projects %}
             <div class="list-group-item">
-                <div class="project-content">
-                    <h5 class="mb-1">{{ project.name }}</h5>
-                    <small class="text-muted">Created by: {{ project.user.email }}</small>
-                    <div class="mt-2">
-                        <small class="text-muted">Start Language: {{ project.startLanguage.name }}</small><br>
-                        <small class="text-muted">Target Language: {{ project.targetLanguage.name }}</small>
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="mb-1">{{ project.name }}</h5>
+                        <small class="text-muted">Created by: {{ project.user.email }}</small>
+                        <div class="mt-2">
+                            <small class="text-muted"><b>Start Language:</b> {{ project.startLanguage.name }}</small><br>
+                            <small class="text-muted"><b>Target Language:</b> {{ project.targetLanguage.name }}</small>
+                        </div>
                     </div>
-                </div>
-                
-                <div class="action-buttons">
-                    <a href="{{ path('app_projects_show', {id: project.id}) }}" class="btn btn-info btn-sm">
-                        <i class="fas fa-eye"></i>
-                    </a>
-                    {% if project.user == app.user %}
-                        <a href="#" class="btn btn-success btn-sm">
-                            <i class="fas fa-file-export"></i>
+                    
+                    <div class="action-buttons">
+                        <a href="{{ path('app_projects_show', {id: project.id}) }}" class="btn btn-info btn-sm">
+                            <i class="fas fa-eye"></i>
                         </a>
-                        <a href="#" class="btn btn-warning btn-sm">
-                            <i class="fas fa-edit"></i>
-                        </a>
-                        <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteProjectModal{{ project.id }}">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    {% endif %}
+                        {% if project.user == app.user %}
+                            <a href="{{ path('app_projects_export_csv', {'id': project.id}) }}" class="btn btn-success btn-sm">
+                                <i class="fas fa-file-export"></i>
+                            </a>
+                            <a href="#" class="btn btn-warning btn-sm">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteProjectModal{{ project.id }}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
             

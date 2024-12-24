@@ -77,6 +77,39 @@ class ProjectsController extends AbstractController
         return $this->redirectToRoute('app_projects');
     }
 
+    #[Route('/{id}/export-csv', name: 'app_projects_export_csv')]
+    public function exportProjectCsv(Projects $project): Response
+    {
+        if ($project->getUser() !== $this->getUser()) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $response = new Response();
+        $response->headers->set('Content-Type', 'text/csv');
+        $response->headers->set('Content-Disposition', 'attachment; filename="project_'.$project->getId().'.csv"');
+        
+        $output = fopen('php://temp', 'r+');
+        
+        // Headers
+        fputcsv($output, ['Key', 'Content', 'Project']);
+        
+        // Data
+        foreach ($project->getSources() as $source) {
+            fputcsv($output, [
+                $source->getCle(),
+                $source->getContent(),
+                $project->getName()
+            ]);
+        }
+        
+        rewind($output);
+        $content = stream_get_contents($output);
+        fclose($output);
+        
+        $response->setContent($content);
+        return $response;
+    }
+
     public function getProjectStats(ProjectsRepository $repository): array
     {
         $qb = $repository->createQueryBuilder('p')
