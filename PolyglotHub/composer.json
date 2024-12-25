@@ -90,6 +90,7 @@
         }
     },
     "require-dev": {
+        "doctrine/doctrine-fixtures-bundle": "^4.0",
         "symfony/doctrine-bridge": "*",
         "symfony/maker-bundle": "*",
         "symfony/web-profiler-bundle": "7.1.*"
