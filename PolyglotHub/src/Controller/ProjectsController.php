@@ -32,25 +32,32 @@ class ProjectsController extends AbstractController
     #[Route('/new', name: 'app_projects_new')]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
-        $projects = new Projects();
-        $projects->setUser($this->getUser()); // Set current user before form creation
+        $project = new Projects();
+        $project->setUser($this->getUser());
 
-        $form = $this->createForm(ProjectType::class, $projects);
-
+        $form = $this->createForm(ProjectType::class, $project);
         $form->handleRequest($request);
+
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($projects);
+            // Validate required fields
+            if (!$project->getStartLanguage()) {
+                $this->addFlash('error', 'Source language is required');
+                return $this->render('projects/new.html.twig', [
+                    'form' => $form->createView(),
+                ]);
+            }
+
+            $entityManager->persist($project);
             $entityManager->flush();
 
-            // envoyé notification
-            $this->notificationService->sendProjectCreationNotification($projects);
-
+            $this->notificationService->sendProjectCreationNotification($project);
             $this->addFlash('success', 'Project created successfully! Check your email for details.');
+            
             return $this->redirectToRoute('app_projects');
         }
 
         return $this->render('projects/new.html.twig', [
-            'form' => $form,
+            'form' => $form->createView(),
         ]);
     }
 
