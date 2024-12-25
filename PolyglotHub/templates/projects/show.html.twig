@@ -40,7 +40,7 @@
 
                 <div class="text-end">
                     <div><a href={{ path('app_profile_show', {id: project.user.id}) }}>
-                        <small class="text-muted">Créé par : {{ project.user.firstname }} {{ project.user.lastname }}</small>
+                        <small class="text-muted">Propriétaire {{ project.user.firstname }} {{ project.user.lastname }}</small>
                     </a></div>
                     {% if project.collaborator is not null %}
                         <div><a href={{ path('app_profile_show', {id: project.collaborator.id}) }}>
