@@ -38,11 +38,6 @@ class MessageController extends AbstractController
         }
 
         $form = $this->createForm(MessageType::class, $message);
-        
-        if ($message->getRecipient()) {
-            $form->remove('recipient');
-        }
-
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {

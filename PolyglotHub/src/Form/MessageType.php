@@ -18,18 +18,13 @@ class MessageType extends AbstractType
             ->add('recipient', EntityType::class, [
                 'class' => User::class,
                 'choice_label' => function(User $user) {
-                    return $user->getFirstname() . ' ' . $user->getLastname();
+                    return sprintf('%s %s', $user->getFirstname(), $user->getLastname());
                 },
-                'label' => 'To',
-                'required' => true,
-                'placeholder' => 'Choose a recipient...'
+                'required' => true
             ])
             ->add('content', TextareaType::class, [
-                'label' => 'Message',
-                'attr' => [
-                    'rows' => 5,
-                    'placeholder' => 'Type your message here...'
-                ]
+                'required' => true,
+                'attr' => ['rows' => 5]
             ]);
     }
 

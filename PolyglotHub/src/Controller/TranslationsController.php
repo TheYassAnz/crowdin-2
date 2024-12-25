@@ -29,16 +29,16 @@ class TranslationsController extends AbstractController
     {
         $translation = new Translations();
         $form = $this->createForm(TranslationType::class, $translation);
-
         $form->handleRequest($request);
+    
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($translation);
             $entityManager->flush();
             return $this->redirectToRoute('app_translations');
         }
-
+    
         return $this->render('translations/new.html.twig', [
-            'form' => $form,
+            'form' => $form->createView()
         ]);
     }
     #[Route('/{id}', name: 'app_translations_show', requirements: ['id' => '\d+'], methods: ['GET'])]
