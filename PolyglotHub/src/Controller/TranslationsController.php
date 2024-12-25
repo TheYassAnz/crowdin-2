@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Sources;
 use App\Entity\Translations;
 use App\Form\TranslationType;
 use App\Repository\TranslationsRepository;
@@ -27,16 +28,21 @@ class TranslationsController extends AbstractController
     #[Route('/new', name: 'app_translations_new')]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
+        $sourceId = $request->query->get('sourceId');
         $translation = new Translations();
-        $form = $this->createForm(TranslationType::class, $translation);
+        $source = $sourceId ? $entityManager->getRepository(Sources::class)->find($sourceId) : null;
+        if ($source) {
+            $translation->setSource($source);
+        }
+        $form = $this->createForm(TranslationType::class, $translation, ['source' => $source]);
         $form->handleRequest($request);
-    
+
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($translation);
             $entityManager->flush();
-            return $this->redirectToRoute('app_translations');
+            return $this->redirectToRoute('app_sources_show', ['id' => $translation->getSource()->getId()]);
         }
-    
+
         return $this->render('translations/new.html.twig', [
             'form' => $form->createView()
         ]);
