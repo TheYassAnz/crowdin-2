@@ -23,41 +23,46 @@
 			<div class="d-flex justify-content-between my-5">
 				<a href="{{ path('app_sources') }}" class="btn btn-secondary">Retour à la liste</a>
 			</div>
-			<div class="list-group">
-				<div class="list-group-item">
-					<div class="d-flex w-100 justify-content-between p-3">
-						<h5 class="mb-1">{{ source.content }}</h5>
-						<small class="text-muted">Clé :
-							{{ source.cle }}</small>
-					</div>
-					<div class="d-flex w-100 justify-content-between px-3 mb-3">
-						<small class="text-muted">Lié au projet :
-							<a href="{{ path('app_projects_show', {id: source.project.id}) }}">{{ source.project.name }}</a>
-						</small>
-						<small class="text-muted">Langage cible :
-							{% for language in source.project.getTargetLanguages() %}
-								{{ language.name }}
-								{% if not loop.last %},
-								{% endif %}
-							{% endfor %}
-						</small>
 
 
-					</div>
-					<div class="mt-3">
-						<h6>Traductions :</h6>
-						<ul class="list-group">
-							{% for translation in source.translations %}
-								<a href="{{ path('app_translations_show', {id: translation.id})}}" class="list-group-item list-group-item-action">
-									<small>{{ translation.getTranslatedContent() }}</small>
-								</a>
-							{% else %}
-								<li>Aucune traduction disponible</li>
-							{% endfor %}
-						</ul>
-					</div>
+			<div class="card p-2">
+				<div class="d-flex w-100 justify-content-between p-3">
+					<h5 class="mb-1">{{ source.content }}</h5>
+					<small class="text-muted">Clé :
+						{{ source.cle }}</small>
+				</div>
+				<div class="d-flex w-100 justify-content-between px-3 mb-3">
+					<small class="text-muted">Lié au projet :
+						<a href="{{ path('app_projects_show', {id: source.project.id}) }}">{{ source.project.name }}</a>
+					</small>
+					<small class="text-muted">Langage cible :
+						{% for language in source.project.getTargetLanguages() %}
+							{{ language.name }}
+							{% if not loop.last %},
+							{% endif %}
+						{% endfor %}
+					</small>
 				</div>
 			</div>
+			<div class="mt-3">
+				<div class="d-flex justify-content-between">
+					<h5>Traductions</h5>
+					<a href="{{ path('app_translations_new', {sourceId: source.id}) }}" class="btn btn-dark">
+						<i class="fa fa-plus"></i>
+					</a>
+				</div>
+				<ul class="list-group">
+					{% for translation in source.translations %}
+						<a href="{{ path('app_translations_show', {id: translation.id})}}" class="list-group-item list-group-item-action">
+							<small>{{ translation.getTranslatedContent() }}</small>
+						</a>
+					{% else %}
+						<li>Aucune traduction disponible</li>
+					{% endfor %}
+				</ul>
+			</div>
+
+
 		{% else %}
 			<div class="alert alert-warning text-center">Source inexistante</div>
 		{% endif %}

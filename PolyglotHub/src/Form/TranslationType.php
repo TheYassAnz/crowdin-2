@@ -20,6 +20,9 @@ class TranslationType extends AbstractType
                 'class' => Sources::class,
                 'choice_label' => 'content',
                 'label' => 'Source',
+                'placeholder' => 'Choisir une source',
+                'data' => $options['source'] ?? null,
+                'disabled' => $options['source'] !== null,
             ])
             ->add(
                 'translated_content',
@@ -32,6 +35,7 @@ class TranslationType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Translations::class,
+            'source' => null, // Ajouter cette ligne pour définir l'option "source"
         ]);
     }
 }
