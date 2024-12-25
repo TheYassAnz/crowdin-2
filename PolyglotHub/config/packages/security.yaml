@@ -12,6 +12,9 @@ security:
                 property: email
 
     firewalls:
+        api:
+            stateless: true
+            pattern: ^/api
         # Development firewall, allows access to development tools without security
         dev:
             pattern: '^/(_(profiler|wdt)|css|images|js)/'

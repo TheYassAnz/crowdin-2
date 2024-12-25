@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -13,6 +14,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
+#[ApiResource]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -190,7 +192,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getUnreadMessages(): Collection
     {
-        return $this->receivedMessages->filter(function(Message $message) {
+        return $this->receivedMessages->filter(function (Message $message) {
             return !$message->isRead();
         });
     }
