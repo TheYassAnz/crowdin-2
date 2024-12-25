@@ -27,7 +27,12 @@
                 {% if is_granted('IS_AUTHENTICATED_FULLY') %}
                     <li class="nav-item me-2">
                         <a class="nav-link" href="{{ path('app_messages') }}">
-                            <i class="fas fa-envelope"></i>
+                            {% if app.user.unreadMessages|length > 0 %}
+                                <i class="fas fa-envelope text-primary"></i>
+                                <span class="badge bg-danger">{{ app.user.unreadMessages|length }}</span>
+                            {% else %}
+                                <i class="fas fa-envelope-open text-muted"></i>
+                            {% endif %}
                             Messages
                         </a>
                     </li>

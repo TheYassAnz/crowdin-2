@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -45,6 +46,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 255)]
     private ?string $lastname = null;
+
+    #[ORM\OneToMany(mappedBy: 'recipient', targetEntity: Message::class, orphanRemoval: true)]
+    private Collection $receivedMessages;
+
+    public function __construct()
+    {
+        $this->receivedMessages = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -167,5 +176,22 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->lastname = $lastname;
 
         return $this;
+    }
+
+    public function getFullName(): string
+    {
+        return trim($this->firstname . ' ' . $this->lastname);
+    }
+
+    public function getReceivedMessages(): Collection
+    {
+        return $this->receivedMessages;
+    }
+
+    public function getUnreadMessages(): Collection
+    {
+        return $this->receivedMessages->filter(function(Message $message) {
+            return !$message->isRead();
+        });
     }
 }

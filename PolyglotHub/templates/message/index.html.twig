@@ -4,23 +4,94 @@
 
 {% block body %}
     <div class="container mt-4">
-        <h1>Messages</h1>
-        
-        <div class="list-group">
-            {% for message in messages %}
-                <div class="list-group-item {% if not message.isRead %}fw-bold{% endif %}">
-                    <div class="d-flex w-100 justify-content-between">
-                        <h5 class="mb-1">From: {{ message.sender.fullName }}</h5>
-                        <small>{{ message.createdAt|date('Y-m-d H:i:s') }}</small>
-                    </div>
-                    <p class="mb-1">{{ message.content }}</p>
-                    <small>
-                        <a href="{{ path('app_messages_new', {'recipientId': message.sender.id}) }}" class="btn btn-sm btn-primary">Reply</a>
-                    </small>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>Messages</h1>
+            <div>
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newMessageModal">
+                    <i class="fas fa-plus"></i> New Message
+                </button>
+            </div>
+        </div>
+
+        <ul class="nav nav-tabs mb-3" id="messagesTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="inbox-tab" data-bs-toggle="tab" data-bs-target="#inbox" type="button" role="tab">
+                    Inbox {% if receivedMessages|filter(m => not m.isRead)|length > 0 %}
+                        <span class="badge bg-primary">{{ receivedMessages|filter(m => not m.isRead)|length }}</span>
+                    {% endif %}
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="sent-tab" data-bs-toggle="tab" data-bs-target="#sent" type="button" role="tab">Sent</button>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="messagesContent">
+            <div class="tab-pane fade show active" id="inbox" role="tabpanel">
+                <div class="list-group">
+                    {% for message in receivedMessages %}
+                        <div class="list-group-item {% if not message.isRead %}fw-bold{% endif %}">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1">From: {{ message.sender.fullName }}</h5>
+                                <small>{{ message.createdAt|date('Y-m-d H:i:s') }}</small>
+                            </div>
+                            <p class="mb-1">{{ message.content }}</p>
+                            <div class="d-flex gap-2">
+                                <a href="{{ path('app_messages_new') }}" class="btn btn-sm btn-primary">Reply</a>
+                                {% if not message.isRead %}
+                                    <a href="{{ path('app_messages_mark_read', {'id': message.id}) }}" 
+                                       class="btn btn-sm btn-secondary">Mark as Read</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-dark">No messages in inbox.</div>
+                    {% endfor %}
                 </div>
-            {% else %}
-                <div class="alert alert-dark">Inbox empty.</div>
-            {% endfor %}
+            </div>
+
+            <div class="tab-pane fade" id="sent" role="tabpanel">
+                <div class="list-group">
+                    {% for message in sentMessages %}
+                        <div class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1">To: {{ message.recipient.fullName }}</h5>
+                                <small>{{ message.createdAt|date('Y-m-d H:i:s') }}</small>
+                            </div>
+                            <p class="mb-1">{{ message.content }}</p>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-dark">No sent messages.</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="newMessageModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">New Message</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="{{ path('app_messages_new') }}" method="get">
+                        <div class="mb-3">
+                            <label for="recipient" class="form-label">Select Recipient</label>
+                            <select name="recipientId" id="recipient" class="form-control" required>
+                                <option value="">Choose...</option>
+                                {% for user in users %}
+                                    {% if user != app.user %}
+                                        <option value="{{ user.id }}">{{ user.firstname }} {{ user.lastname }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Continue</button>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 {% endblock %}

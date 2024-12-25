@@ -17,7 +17,7 @@ class Translations
     private ?string $translated_content = null;
 
     #[ORM\ManyToOne(targetEntity: Sources::class, inversedBy: 'translations')]
-    #[ORM\JoinColumn(name: "source_id", referencedColumnName: "id", nullable: false)]
+    #[ORM\JoinColumn(nullable: false)]
     private ?Sources $source = null;
 
     public function getId(): ?int
