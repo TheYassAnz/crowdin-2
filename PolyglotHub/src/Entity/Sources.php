@@ -23,14 +23,14 @@ class Sources
     #[ORM\Column(length: 255)]
     private ?string $cle = null;
 
-    #[ORM\ManyToOne(targetEntity: Projects::class, inversedBy: 'sources')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\ManyToOne(inversedBy: 'sources')]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private ?Projects $project = null;
 
     /**
      * @var Collection<int, Translations>
      */
-    #[ORM\OneToMany(mappedBy: 'source', targetEntity: Translations::class)]
+    #[ORM\OneToMany(mappedBy: 'source', targetEntity: Translations::class, cascade: ['persist', 'remove'])]
     private Collection $translations;
 
     #[ORM\ManyToMany(targetEntity: Language::class)]

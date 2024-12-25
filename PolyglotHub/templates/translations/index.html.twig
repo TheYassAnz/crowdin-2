@@ -35,8 +35,14 @@
                 <small class="text-muted">Clé: {{ translation.source.cle }}</small>
             </div>
             <div class="d-flex w-100 justify-content-end px-3 mb-3">
-                <small class="text-muted">Language cible : {{ translation.source.project.getTargetLanguage().getName() }}</small>
+                {% set targetLang = translation.source.project.targetLanguage %}
+                {% if targetLang %}
+                    <small class="text-muted">Language cible : {{ targetLang.name }}</small>
+                {% else %}
+                    <small class="text-muted text-danger">Langue cible non définie</small>
+                {% endif %}
             </div>
+            {{ dump(translation.source.project) }}
         </a>
         {% endfor %}
     </div>
