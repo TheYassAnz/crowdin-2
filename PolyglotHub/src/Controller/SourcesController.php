@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Projects;
 use App\Entity\Sources;
 use App\Form\SourceType;
 use App\Form\CsvImportType;
@@ -36,8 +37,9 @@ class SourcesController extends AbstractController
     #[Route('/new', name: 'app_sources_new')]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
+        $projectId = $request->query->get('projectId');
         $source = new Sources();
-        $form = $this->createForm(SourceType::class, $source);
+        $form = $this->createForm(SourceType::class, $source, ['project' => $projectId ? $entityManager->getRepository(Projects::class)->find($projectId) : null]);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -92,16 +94,16 @@ class SourcesController extends AbstractController
     public function exportCsv(SourcesRepository $sourcesRepository): Response
     {
         $sources = $sourcesRepository->findAll();
-        
+
         $response = new Response();
         $response->headers->set('Content-Type', 'text/csv');
         $response->headers->set('Content-Disposition', 'attachment; filename=sources.csv');
-        
+
         $output = fopen('php://temp', 'r+');
-        
+
         // Headers
         fputcsv($output, ['Key', 'Content', 'Project']);
-        
+
         // Data
         foreach ($sources as $source) {
             fputcsv($output, [
@@ -110,11 +112,11 @@ class SourcesController extends AbstractController
                 $source->getProject()->getName()
             ]);
         }
-        
+
         rewind($output);
         $content = stream_get_contents($output);
         fclose($output);
-        
+
         $response->setContent($content);
         return $response;
     }
@@ -127,7 +129,7 @@ class SourcesController extends AbstractController
             throw $this->createAccessDeniedException('You can only delete your own sources.');
         }
 
-        if ($this->isCsrfTokenValid('delete'.$source->getId(), $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $source->getId(), $request->request->get('_token'))) {
             $entityManager->remove($source);
             $entityManager->flush();
             $this->addFlash('success', 'Source deleted successfully.');
