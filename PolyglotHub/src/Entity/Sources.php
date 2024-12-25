@@ -21,21 +21,15 @@ class Sources
     #[ORM\Column(length: 255)]
     private ?string $cle = null;
 
-    #[ORM\ManyToOne(targetEntity: Projects::class)]
-    #[ORM\JoinColumn(name: "project_id", referencedColumnName: "id", nullable: false)]
+    #[ORM\ManyToOne(targetEntity: Projects::class, inversedBy: 'sources')]
+    #[ORM\JoinColumn(nullable: false)]
     private ?Projects $project = null;
 
     /**
      * @var Collection<int, Translations>
      */
-    #[ORM\OneToMany(mappedBy: 'source', targetEntity: Translations::class, cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(mappedBy: 'source', targetEntity: Translations::class)]
     private Collection $translations;
-
-    /**
-     * @var Collection<int, Translations>
-     */
-    #[ORM\OneToMany(targetEntity: Translations::class, mappedBy: 'source')]
-    private Collection $test;
 
     #[ORM\ManyToMany(targetEntity: Language::class)]
     #[ORM\JoinTable(name: 'source_language')]
@@ -47,7 +41,6 @@ class Sources
     public function __construct()
     {
         $this->translations = new ArrayCollection();
-        $this->test = new ArrayCollection();
         $this->languages = new ArrayCollection();
         $this->createDate = new \DateTime();
     }
@@ -96,12 +89,15 @@ class Sources
         return $this;
     }
 
+    /**
+     * @return Collection<int, Translations>
+     */
     public function getTranslations(): Collection
     {
         return $this->translations;
     }
 
-    public function addTranslation(Translations $translation): static
+    public function addTranslation(Translations $translation): self
     {
         if (!$this->translations->contains($translation)) {
             $this->translations->add($translation);
@@ -110,35 +106,11 @@ class Sources
         return $this;
     }
 
-    public function removeTranslation(Translations $translation): static
+    public function removeTranslation(Translations $translation): self
     {
         if ($this->translations->removeElement($translation)) {
             if ($translation->getSource() === $this) {
                 $translation->setSource(null);
-            }
-        }
-        return $this;
-    }
-
-    public function getTest(): Collection
-    {
-        return $this->test;
-    }
-
-    public function addTest(Translations $test): static
-    {
-        if (!$this->test->contains($test)) {
-            $this->test->add($test);
-            $test->setSource($this);
-        }
-        return $this;
-    }
-
-    public function removeTest(Translations $test): static
-    {
-        if ($this->test->removeElement($test)) {
-            if ($test->getSource() === $this) {
-                $test->setSource(null);
             }
         }
         return $this;

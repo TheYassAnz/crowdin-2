@@ -15,8 +15,60 @@ use Symfony\Component\Routing\Annotation\Route;
 class MessageController extends AbstractController
 {
     #[Route('/', name: 'app_messages')]
-    public function index(): Response
+    public function index(EntityManagerInterface $entityManager): Response
     {
-        return $this->render('message/index.html.twig');
+        return $this->render('message/index.html.twig', [
+            'receivedMessages' => $entityManager->getRepository(Message::class)->findBy(['recipient' => $this->getUser()]),
+            'sentMessages' => $entityManager->getRepository(Message::class)->findBy(['sender' => $this->getUser()]),
+            'users' => $entityManager->getRepository(User::class)->findAll()
+        ]);
+    }
+
+    #[Route('/new/{recipientId?}', name: 'app_messages_new')]
+    public function new(Request $request, EntityManagerInterface $entityManager, ?int $recipientId = null): Response
+    {
+        $message = new Message();
+        $message->setSender($this->getUser());
+
+        if ($recipientId) {
+            $recipient = $entityManager->getRepository(User::class)->find($recipientId);
+            if ($recipient) {
+                $message->setRecipient($recipient);
+            }
+        }
+
+        $form = $this->createForm(MessageType::class, $message);
+        
+        if ($message->getRecipient()) {
+            $form->remove('recipient');
+        }
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->persist($message);
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Message sent successfully!');
+            return $this->redirectToRoute('app_messages');
+        }
+
+        return $this->render('message/new.html.twig', [
+            'form' => $form->createView(),
+            'recipient' => $message->getRecipient()
+        ]);
+    }
+
+    #[Route('/{id}/mark-read', name: 'app_messages_mark_read')]
+    public function markAsRead(Message $message, EntityManagerInterface $entityManager): Response
+    {
+        if ($message->getRecipient() !== $this->getUser()) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $message->setIsRead(true);
+        $entityManager->flush();
+
+        return $this->redirectToRoute('app_messages');
     }
 }
