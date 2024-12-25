@@ -4,156 +4,174 @@
 {% endblock %}
 
 {% block stylesheets %}
-	{{ parent() }}
-	<style>
-		.list-group-item {
-			position: relative;
-			overflow: hidden;
-			padding: 1.5rem;
-		}
+    {{ parent() }}
+    <style>
+        .list-group-item {
+            position: relative;
+            overflow: hidden;
+            padding: 1.5rem;
+        }
 
-		.action-buttons {
-			position: absolute;
-			right: -150px;
-			top: 50%;
-			transform: translateY(-50%);
-			display: flex;
-			gap: 0.5rem;
-			padding: 0.5rem;
-			background: white;
-			border-radius: 4px;
-			box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
-		}
+        .action-buttons {
+            position: absolute;
+            right: -150px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            background: white;
+            border-radius: 4px;
+            box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+        }
 
-		.list-group-item:hover {
-			background-color: #f8f9fa;
-		}
+        .list-group-item:hover {
+            background-color: #f8f9fa;
+        }
 
-		.project-content {
-			transition: transform 0.3s ease;
-		}
+        .project-content {
+            transition: transform 0.3s ease;
+        }
 
-		.list-group-item:hover .project-content {
-			transform: translateX(-100px);
-		}
-	</style>
+        .list-group-item:hover .project-content {
+            transform: translateX(-100px);
+        }
+
+        hr {
+            margin: 1rem 0;
+            opacity: 0.1;
+        }
+    </style>
 {% endblock %}
 
 {% block body %}
-	<div class="container mt-4">
-		<h1>Projects</h1>
+    <div class="container mt-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>Projects</h1>
+            <div>
+                <a href="{{ path('app_projects_new') }}" class="btn btn-dark" data-bs-toggle="tooltip" title="Créer un nouveau projet">
+                    <i class="fas fa-plus"></i>
+                </a>
+            </div>
+        </div>
 
-		<div class="mb-3">
-			<a href="{{ path('app_projects_new') }}" class="btn btn-primary">Create New Project</a>
-		</div>
+        <div class="list-group">
+            {% for project in projects %}
+                <div class="list-group-item">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="mb-1">{{ project.name }}</h5>
+                            <small class="text-muted">Propriétaire:
+                                {{ project.user.firstname }}
+                                {{ project.user.lastname }}</small>
+                            {% if project.collaborator is not null %}
+                                <div>
+                                    <small class="text-muted">
+                                        Collaborateur :
+                                        <a href="{{ path('app_profile_show', {id: project.collaborator.id}) }}">
+                                            {{ project.collaborator.firstname }}
+                                            {{ project.collaborator.lastname }}
+                                        </a>
+                                    </small>
+                                </div>
+                            {% endif %}
+                            <div class="mt-2">
+                                <small class="text-muted">
+                                    <b>Langue d'origine :</b>
+                                    {{ project.startLanguage.name }}
+                                </small>
+                                <br>
+                                <small class="text-muted">
+                                    <b>Langue cible :</b>
+                                    {{ project.targetLanguage.name }}
+                                </small>
+                            </div>
+                        </div>
 
-		<div class="list-group">
-			{% for project in projects %}
-				<div class="list-group-item">
-					<div class="d-flex justify-content-between align-items-center">
-						<div>
-							<h5 class="mb-1">{{ project.name }}</h5>
-							<small class="text-muted">Created by: {{ project.user.firstname }} {{ project.user.lastname }}</small>
-							{% if project.collaborator is not null %}
-								<div>
-									<a href={{ path('app_profile_show', {id: project.collaborator.id} ) }}>
-										<small class="text-muted">Collaborateur : {{ project.collaborator.firstname }} {{ project.collaborator.lastname }}</small>
-									</a>
-								</div>
-							{% endif %}
-							<div class="mt-2">
-								<small class="text-muted">
-									<b>Start Language:</b>
-									{{ project.startLanguage.name }}</small><br>
-								<small class="text-muted">
-									<b>Target Language:</b>
-									{{ project.targetLanguage.name }}</small>
-							</div>
-						</div>
-
-						<div class="action-buttons">
-							<a href="{{ path('app_projects_show', {id: project.id}) }}" class="btn btn-info btn-sm">
-								<i class="fas fa-eye"></i>
-							</a>
-							{% if project.user == app.user %}
-								<a href="{{ path('app_projects_export_csv', {'id': project.id}) }}" class="btn btn-success btn-sm">
-									<i class="fas fa-file-export"></i>
-								</a>
-								<a href="#" class="btn btn-warning btn-sm">
-									<i class="fas fa-edit"></i>
-								</a>
-								<button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteProjectModal{{ project.id }}">
-									<i class="fas fa-trash"></i>
-								</button>
-							{% endif %}
-						</div>
-					</div>
-				</div>
-
-				{% if project.user == app.user %}
-					<!-- Delete Modal -->
-					<div class="modal fade" id="deleteProjectModal{{ project.id }}" tabindex="-1">
-						<div class="modal-dialog">
-							<div class="modal-content">
-								<div class="modal-header">
-									<h5 class="modal-title">Confirm Delete</h5>
-									<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-								</div>
-								<div class="modal-body">
-									Are you sure you want to delete this project? All associated sources will also be deleted.
-								</div>
-								<div class="modal-footer">
-									<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-									<form action="{{ path('app_projects_delete', {id: project.id}) }}" method="post" style="display: inline-block">
-										<input type="hidden" name="_token" value="{{ csrf_token('delete' ~ project.id) }}">
-										<button type="submit" class="btn btn-danger">Delete</button>
-									</form>
-								</div>
-							</div>
-						</div>
-					</div>
-				{% endif %}
-			{% else %}
-				<div class="alert alert-info">No projects found.</div>
-			{% endfor %}
-		</div>
-	</div>
+                        <div class="action-buttons">
+                            <a href="{{ path('app_projects_show', {id: project.id}) }}" class="btn btn-info btn-sm">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            {% if project.user == app.user %}
+                                <a href="{{ path('app_projects_export_csv', {'id': project.id}) }}" class="btn btn-success btn-sm">
+                                    <i class="fas fa-file-export"></i>
+                                </a>
+                                <a href="#" class="btn btn-warning btn-sm">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteProjectModal{{ project.id }}">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% if not loop.last %}
+                    <hr>
+                {% endif %}
+                {% if project.user == app.user %}
+                    <!-- Delete Modal -->
+                    <div class="modal fade" id="deleteProjectModal{{ project.id }}" tabindex="-1">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Confirm Delete</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body">
+                                    Are you sure you want to delete this project? All associated sources will also be deleted.
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                    <form action="{{ path('app_projects_delete', {id: project.id}) }}" method="post" style="display: inline-block">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ project.id) }}">
+                                        <button type="submit" class="btn btn-danger">Delete</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            {% else %}
+                <div class="alert alert-info">No projects found.</div>
+            {% endfor %}
+        </div>
+    </div>
 {% endblock %}
 
 {% block javascripts %}
-	{{ parent() }}
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-	<script>
-		document.addEventListener('DOMContentLoaded', () => { // Initial animation
-gsap.from('.list-group-item', {
-duration: 0.5,
-opacity: 0,
-y: 30,
-stagger: 0.1,
-ease: 'power2.out'
-});
+    {{ parent() }}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => { // Initial animation
+            gsap.from('.list-group-item', {
+                duration: 0.5,
+                opacity: 0,
+                y: 30,
+                stagger: 0.1,
+                ease: 'power2.out'
+            });
 
-// Hover animations
-document.querySelectorAll('.list-group-item').forEach(item => {
-const buttons = item.querySelector('.action-buttons');
-const timeline = gsap.timeline({paused: true});
+            document.querySelectorAll('.list-group-item').forEach(item => {
+                const buttons = item.querySelector('.action-buttons');
+                const timeline = gsap.timeline({paused: true});
 
-timeline.to(buttons, {
-duration: 0.3,
-right: '1rem',
-opacity: 1,
-ease: 'power2.out'
-}).from(buttons.children, {
-duration: 0.2,
-opacity: 0,
-x: 20,
-stagger: 0.05,
-ease: 'power2.out'
-}, '-=0.1');
+                timeline.to(buttons, {
+                    duration: 0.3,
+                    right: '1rem',
+                    opacity: 1,
+                    ease: 'power2.out'
+                }).from(buttons.children, {
+                    duration: 0.2,
+                    opacity: 0,
+                    x: 20,
+                    stagger: 0.05,
+                    ease: 'power2.out'
+                }, '-=0.1');
 
-item.addEventListener('mouseenter', () => timeline.play());
-item.addEventListener('mouseleave', () => timeline.reverse());
-});
-});
-	</script>
+                item.addEventListener('mouseenter', () => timeline.play());
+                item.addEventListener('mouseleave', () => timeline.reverse());
+            });
+        });
+    </script>
 {% endblock %}
