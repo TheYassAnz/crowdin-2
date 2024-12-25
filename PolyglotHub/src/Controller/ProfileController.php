@@ -59,6 +59,7 @@ class ProfileController extends AbstractController
 
         return $this->render('profile/new.html.twig', [
             'form' => $form,
+            'user' => $user,
         ]);
     }
 }

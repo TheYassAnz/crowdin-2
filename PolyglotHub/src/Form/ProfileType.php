@@ -18,12 +18,10 @@ class ProfileType extends AbstractType
             ->add('description', null, [
                 'label' => 'Description',
             ])
-            ->add('picture', null, [
-                'label' => 'Photo',
-            ])
             ->add('favorite_languages', EntityType::class, [
                 'class' => Language::class,
                 'choice_label' => 'name',
+                'label' => 'Langues favories',
                 'multiple' => true,
             ])
         ;
