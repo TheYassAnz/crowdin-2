@@ -29,6 +29,8 @@ class SourceType extends AbstractType
                 'choice_label' => 'name',
                 'label' => 'Projet lié',
                 'placeholder' => 'Choisir un projet',
+                'data' => $options['project'] ?? null,
+                'disabled' => $options['project'] !== null,
             ])
         ;
     }
@@ -37,6 +39,7 @@ class SourceType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Sources::class,
+            'project' => null,
         ]);
     }
 }
