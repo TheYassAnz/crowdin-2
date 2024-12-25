@@ -54,7 +54,7 @@ class SourcesController extends AbstractController
             $this->notificationService->sendSourceCreationNotification($source);
 
             $this->addFlash('success', 'Source created successfully! Check your email for details.');
-            return $this->redirectToRoute('app_sources');
+            return $this->redirectToRoute('app_projects_show', ['id' => $source->getProject()->getId()]);
         }
 
         return $this->render('sources/new.html.twig', [
