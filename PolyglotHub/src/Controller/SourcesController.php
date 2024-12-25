@@ -39,7 +39,11 @@ class SourcesController extends AbstractController
     {
         $projectId = $request->query->get('projectId');
         $source = new Sources();
-        $form = $this->createForm(SourceType::class, $source, ['project' => $projectId ? $entityManager->getRepository(Projects::class)->find($projectId) : null]);
+        $project = $projectId ? $entityManager->getRepository(Projects::class)->find($projectId) : null;
+        if ($project) {
+            $source->setProject($project);
+        }
+        $form = $this->createForm(SourceType::class, $source, ['project' => $project]);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
