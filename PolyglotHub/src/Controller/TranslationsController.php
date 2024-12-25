@@ -41,6 +41,7 @@ class TranslationsController extends AbstractController
             'form' => $form->createView()
         ]);
     }
+    
     #[Route('/{id}', name: 'app_translations_show', requirements: ['id' => '\d+'], methods: ['GET'])]
     public function show(?Translations $translation): Response
     {

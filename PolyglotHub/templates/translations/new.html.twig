@@ -7,18 +7,34 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const aiButton = document.querySelector('#ai-suggest-btn');
-            if (aiButton) {
+            const sourceSelect = document.querySelector('#translation_source');
+            const translatedInput = document.querySelector('#translation_translated_content');
+            
+            const targetLanguage = '{{ source.project.targetLanguage.code|default('en')|escape('js') }}';
+            
+            console.log('AI translation elements:', {
+                aiButton: !!aiButton,
+                sourceSelect: !!sourceSelect,
+                translatedInput: !!translatedInput,
+                targetLanguage: targetLanguage
+            });
+
+            if (aiButton && sourceSelect && translatedInput) {
                 aiButton.addEventListener('click', async function() {
                     try {
-                        console.log('Getting AI suggestion...');
-                        const sourceText = document.querySelector('#translation_content').value;
-                        const targetLanguage = document.querySelector('#translation_language').value;
-                        
-                        if (!sourceText || !targetLanguage) {
-                            console.error('Missing source text or target language');
-                            return;
+                        const sourceOption = sourceSelect.options[sourceSelect.selectedIndex];
+                        if (!sourceOption) {
+                            throw new Error('Please select a source text');
                         }
-
+                        
+                        const sourceText = sourceOption.text;
+                        if (!sourceText || !targetLanguage) {
+                            throw new Error('Source text or target language missing');
+                        }
+                        
+                        aiButton.disabled = true;
+                        aiButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Translating...';
+                        
                         const response = await fetch('/api/ai/suggest', {
                             method: 'POST',
                             headers: {
@@ -30,50 +46,55 @@
                             })
                         });
                         
-                        const data = await response.json();
-                        console.log('AI response:', data);
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
                         
+                        const data = await response.json();
                         if (data.suggestion) {
-                            document.querySelector('#translation_translated_content').value = data.suggestion;
+                            translatedInput.value = data.suggestion;
                         }
                     } catch (error) {
                         console.error('Error:', error);
+                        alert(error.message);
+                    } finally {
+                        aiButton.disabled = false;
+                        aiButton.innerHTML = '<i class="fas fa-robot"></i> Get AI Suggestion';
                     }
                 });
             } else {
-                console.error('AI suggestion button not found');
+                console.error('Required elements not found');
             }
         });
     </script>
 {% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper {
-        margin: 1em auto;
-        max-width: 800px;
-        width: 95%;
-        font: 18px/1.5 sans-serif;
-    }
-
-    .example-wrapper code {
-        background: #F5F5F5;
-        padding: 2px 6px;
-    }
-</style>
-
-<div class="example-wrapper">
-    <div class="w-50 mx-auto">
-        <h1>Proposer une traduction</h1>
-
-        {{ form_start(form) }}
-        {{ form_widget(form) }}
-        <p>{{ translation.source.project.name }}</p>
-        <button type="submit" class="btn btn-primary">Envoyer</button>
-        <button type="button" id="ai-suggest-btn" class="btn btn-secondary">
-            <i class="fas fa-robot"></i> Get AI Suggestion
-        </button>
-        {{ form_end(form) }}
+    <div class="container mt-4">
+        <div class="card">
+            <div class="card-header">
+                <h2>New Translation</h2>
+            </div>
+            <div class="card-body">
+                {{ form_start(form) }}
+                    <div class="mb-3">
+                        {{ form_label(form.source) }}
+                        {{ form_widget(form.source, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(form.source) }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form_label(form.translated_content) }}
+                        {{ form_widget(form.translated_content, {'attr': {'class': 'form-control', 'rows': 5}}) }}
+                        {{ form_errors(form.translated_content) }}
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">Save Translation</button>
+                        <button type="button" id="ai-suggest-btn" class="btn btn-secondary">
+                            <i class="fas fa-robot"></i> Get AI Suggestion
+                        </button>
+                    </div>
+                {{ form_end(form) }}
+            </div>
+        </div>
     </div>
-</div>
 {% endblock %}

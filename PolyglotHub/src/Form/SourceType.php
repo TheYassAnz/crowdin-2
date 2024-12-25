@@ -31,8 +31,7 @@ class SourceType extends AbstractType
                 'placeholder' => 'Choisir un projet',
                 'data' => $options['project'] ?? null,
                 'disabled' => $options['project'] !== null,
-            ])
-        ;
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

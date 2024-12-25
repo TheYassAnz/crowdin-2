@@ -11,7 +11,18 @@ class OllamaService
         private readonly HttpClientInterface $httpClient
     ) {}
 
-    public function generateResponse(string $prompt, string $model = 'mistral'): string
+    public function suggestTranslation(string $text, string $targetLanguage): string
+    {
+        $prompt = sprintf(
+            "Translate the following text to %s, preserve the original formatting and only return the translation:\n\n%s",
+            $targetLanguage,
+            $text
+        );
+
+        return $this->generateResponse($prompt);
+    }
+
+    private function generateResponse(string $prompt, string $model = 'mistral'): string
     {
         try {
             $response = $this->httpClient->request('POST', self::OLLAMA_API_URL, [
@@ -25,13 +36,7 @@ class OllamaService
             $data = $response->toArray();
             return $data['response'] ?? 'No response generated';
         } catch (\Exception $e) {
-            return 'Error: ' . $e->getMessage();
+            throw new \RuntimeException('Translation service error: ' . $e->getMessage());
         }
-    }
-
-    public function suggestTranslation(string $text, string $targetLanguage): string
-    {
-        $prompt = "Translate the following text to $targetLanguage: $text";
-        return $this->generateResponse($prompt);
     }
 }
