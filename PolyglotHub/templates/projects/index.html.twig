@@ -133,7 +133,7 @@
                     </div>
                 {% endif %}
             {% else %}
-                <div class="alert alert-info">No projects found.</div>
+                <div class="alert alert-black">No projects found.</div>
             {% endfor %}
         </div>
     </div>
@@ -143,7 +143,7 @@
     {{ parent() }}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', () => { // Initial animation
+        document.addEventListener('DOMContentLoaded', () => {
             gsap.from('.list-group-item', {
                 duration: 0.5,
                 opacity: 0,
