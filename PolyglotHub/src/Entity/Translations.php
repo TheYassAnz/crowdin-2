@@ -22,6 +22,10 @@ class Translations
     #[ORM\JoinColumn(nullable: false)]
     private ?Sources $source = null;
 
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Language $target_language = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -52,6 +56,18 @@ class Translations
     public function setSource(?Sources $source): static
     {
         $this->source = $source;
+        return $this;
+    }
+
+    public function getTargetLanguage(): ?Language
+    {
+        return $this->target_language;
+    }
+
+    public function setTargetLanguage(?Language $target_language): static
+    {
+        $this->target_language = $target_language;
+
         return $this;
     }
 }
