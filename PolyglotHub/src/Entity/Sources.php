@@ -7,37 +7,48 @@ use App\Repository\SourcesRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: SourcesRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    normalizationContext: ["groups" => ["source_read"]],
+    denormalizationContext: ["groups" => ["source_write"]]
+)]
 class Sources
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(["source_read", "project_read"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["source_read", "source_write", "project_read"])]
     private ?string $content = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["source_read", "source_write", "project_read"])]
     private ?string $cle = null;
 
     #[ORM\ManyToOne(inversedBy: 'sources')]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
+    #[Groups(["source_read", "source_write"])]
     private ?Projects $project = null;
 
     /**
      * @var Collection<int, Translations>
      */
     #[ORM\OneToMany(mappedBy: 'source', targetEntity: Translations::class, cascade: ['persist', 'remove'])]
+    #[Groups(["source_read", "source_write"])]
     private Collection $translations;
 
     #[ORM\ManyToMany(targetEntity: Language::class)]
     #[ORM\JoinTable(name: 'source_language')]
+    #[Groups(["source_read", "source_write", "language_read"])]
     private Collection $languages;
 
     #[ORM\Column(type: 'datetime', nullable: true, options: ['default' => 'CURRENT_TIMESTAMP'])]
+    #[Groups(["source_read", "source_write"])]
     private ?\DateTimeInterface $createDate = null;
 
     public function __construct()
