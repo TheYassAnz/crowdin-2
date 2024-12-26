@@ -11,10 +11,17 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use App\Repository\SourcesRepository;
+use App\Repository\LanguageRepository;
+use App\Service\OllamaService;
 
-#[Route('/translations')]
 class TranslationsController extends AbstractController
 {
+    public function __construct(
+        private OllamaService $ollamaService
+    ) {}
+
     #[Route('', name: 'app_translations')]
     function index(TranslationsRepository $repository): Response
     {
@@ -54,5 +61,36 @@ class TranslationsController extends AbstractController
         return $this->render('translations/show.html.twig', [
             'translation' => $translation,
         ]);
+    }
+
+    #[Route('/translations/suggest', name: 'app_translations_suggest', methods: ['POST'])]
+    public function suggest(
+        Request $request, 
+        SourcesRepository $sourcesRepo,
+        LanguageRepository $languageRepo,
+        OllamaService $ollamaService
+    ): JsonResponse
+    {
+        try {
+            $data = json_decode($request->getContent(), true);
+            $source = $sourcesRepo->find($data['sourceId']);
+            $targetLanguage = $languageRepo->find($data['targetLanguageId']);
+
+            if (!$source || !$targetLanguage) {
+                throw new \InvalidArgumentException('Source or target language not found');
+            }
+
+            $suggestion = $ollamaService->suggestTranslation(
+                $source->getContent(),
+                $targetLanguage->getCode()
+            );
+
+            return new JsonResponse(['suggestion' => $suggestion]);
+        } catch (\Exception $e) {
+            return new JsonResponse(
+                ['error' => $e->getMessage()], 
+                JsonResponse::HTTP_INTERNAL_SERVER_ERROR
+            );
+        }
     }
 }
