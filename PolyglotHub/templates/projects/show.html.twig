@@ -36,11 +36,17 @@
 							<ul>
 								<li>
 									<small class="text-muted">Langue d'origine :
-										{{ project.getStartLanguage().getName() }}</small>
+										{{ project.getStartLanguage().getName() }}
+									</small>
 								</li>
 								<li>
 									<small class="text-muted">Langue cible :
-										{{ project.getTargetLanguage().getName() }}</small>
+										{% for language in project.getTargetLanguages() %}
+											{{ language.name }}
+											{% if not loop.last %},
+											{% endif %}
+										{% endfor %}
+									</small>
 								</li>
 							</ul>
 						</div>
@@ -48,14 +54,16 @@
 						<div class="text-end">
 							<div>
 								<small class="text-muted">Propriétaire:
-									{{ project.user.firstname }}
-									{{ project.user.lastname }}</small>
+									<a class="text-dark" href="{{ path('app_profile_show', {id: project.user.id}) }}">
+										{{ project.user.firstname }}
+										{{ project.user.lastname }}</small>
+								</a>
 							</div>
 							{% if project.collaborator is not null %}
 								<div>
 									<small class="text-muted">
 										Collaborateur :
-										<a href="{{ path('app_profile_show', {id: project.collaborator.id}) }}">
+										<a class="text-dark" href="{{ path('app_profile_show', {id: project.collaborator.id}) }}">
 											{{ project.collaborator.firstname }}
 											{{ project.collaborator.lastname }}
 										</a>

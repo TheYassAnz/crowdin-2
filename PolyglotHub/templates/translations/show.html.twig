@@ -35,14 +35,18 @@
 							{{ translation.source.cle }}</small>
 					</div>
 					<div class="d-flex w-100 justify-content-end px-3 mb-3">
-
-						<small class="text-muted">Langage cible :
-							{% for language in translation.source.project.getTargetLanguages() %}
-								{{ language.name }}
-								{% if not loop.last %},
-								{% endif %}
-							{% endfor %}
-						</small>
+						<ul class="list-unstyled">
+							<li>
+								<small class="text-muted">Langue source :
+									{{ translation.source.project.getStartLanguage().name }}
+								</small>
+							</li>
+							<li>
+								<small class="text-muted">Langage cible :
+									{{ translation.getTargetLanguage.name }}
+								</small>
+							</li>
+						</ul>
 					</div>
 				</div>
 			</div>
