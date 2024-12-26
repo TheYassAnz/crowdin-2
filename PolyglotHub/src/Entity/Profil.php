@@ -7,30 +7,39 @@ use App\Repository\ProfilRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: ProfilRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    normalizationContext: ["groups" => ["profil_read"]],
+    denormalizationContext: ["groups" => ["profil_write"]]
+)]
 class Profil
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(["profil_read", "user_read"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(["profil_read", "profil_write"])]
     private ?string $description = null;
 
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(["profil_read", "profil_write", "user_read"])]
     private ?User $user = null;
 
     /**
      * @var Collection<int, Language>
      */
     #[ORM\ManyToMany(targetEntity: Language::class)]
+    #[Groups(["profil_read", "profil_write", "language_read"])]
     private Collection $favorite_languages;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(["profil_read", "profil_write"])]
     private ?string $picture = null;
 
     public function __construct()

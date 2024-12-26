@@ -4,31 +4,41 @@ namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity]
-#[ApiResource()]
+#[ApiResource(
+    normalizationContext: ["groups" => ["message_read"]],
+    denormalizationContext: ["groups" => ["message_write"]]
+)]
 class Message
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(["message_read", "user_read"])]
     private ?int $id = null;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(["message_read", "message_write", "user_read"])]
     private ?User $sender;
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'receivedMessages')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(["message_read", "message_write", "user_read"])]
     private ?User $recipient = null;
 
     #[ORM\Column(type: 'text')]
+    #[Groups(["message_read", "message_write"])]
     private ?string $content;
 
     #[ORM\Column]
+    #[Groups(["message_read", "message_write"])]
     private ?\DateTimeImmutable $createdAt;
 
     #[ORM\Column]
+    #[Groups(["message_read", "message_write"])]
     private bool $isRead = false;
 
     public function __construct()

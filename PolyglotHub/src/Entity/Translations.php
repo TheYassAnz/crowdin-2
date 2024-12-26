@@ -5,25 +5,33 @@ namespace App\Entity;
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\TranslationsRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: TranslationsRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    normalizationContext: ["groups" => ["translation_read"]],
+    denormalizationContext: ["groups" => ["translation_write"]]
+)]
 class Translations
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(["translation_read", "source_read"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["translation_read", "translation_write", "source_read"])]
     private ?string $translated_content = null;
 
     #[ORM\ManyToOne(targetEntity: Sources::class, inversedBy: 'translations')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(["translation_read", "translation_write"])]
     private ?Sources $source = null;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(["translation_read", "translation_write", "language_read"])]
     private ?Language $target_language = null;
 
     public function getId(): ?int
