@@ -11,7 +11,7 @@
             const sourceSelect = document.querySelector('#translation_source');
             const translatedInput = document.querySelector('#translation_translated_content');
             
-            const targetLanguage = '{{ source.project.targetLanguage.code|default('en')|escape('js') }}';
+            const targetLanguage = '{{ source.project.targetLanguages.code|default('en')|escape('js') }}';
             
             console.log('AI translation elements:', {
                 aiButton: !!aiButton,
