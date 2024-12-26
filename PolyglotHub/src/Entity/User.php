@@ -11,45 +11,60 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use App\Repository\UserRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
-#[ApiResource]
+#[ApiResource(
+    normalizationContext: ["groups" => ["user_read"]],
+    denormalizationContext: ["groups" => ["user_write"]]
+)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(["user_read", "project_read"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["user_read", "user_write", "project_read"])]
     private ?string $email = null;
 
     #[ORM\Column]
+    #[Groups(["user_read", "user_write"])]
     private array $roles = [];
 
     #[ORM\Column(length: 255)]
+    #[Groups(["user_write"])]
     private ?string $password = null;
 
     #[ORM\Column]
+    #[Groups(["user_read", "user_write"])]
     private bool $isVerified = false;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Groups(["user_read", "user_write"])]
     private ?\DateTimeInterface $create_date = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    #[Groups(["user_read", "user_write"])]
     private ?\DateTimeInterface $update_date = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(["user_read", "user_write"])]
     private ?string $verificationToken = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["user_read", "user_write", "project_read"])]
     private ?string $firstname = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["user_read", "user_write", "project_read"])]
     private ?string $lastname = null;
 
     #[ORM\OneToMany(mappedBy: 'recipient', targetEntity: Message::class, orphanRemoval: true)]
+    #[Groups(["user_read"])]
     private Collection $receivedMessages;
 
     public function __construct()

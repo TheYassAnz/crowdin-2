@@ -7,41 +7,54 @@ use App\Repository\ProjectsRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: ProjectsRepository::class)]
-#[ApiResource]
+
+#[ApiResource(
+    normalizationContext: ["groups" => ["project_read"]],
+    denormalizationContext: ["groups" => ["project_write"]]
+)]
+
 class Projects
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups("project_read")]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups("project_read")]
     private ?string $name = null;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(["project_read", "project_write", "user_read"])]
     private ?User $user = null;
 
     #[ORM\ManyToOne(targetEntity: Language::class)]
     #[ORM\JoinColumn(name: "start_language", referencedColumnName: "id", nullable: false)]
+    #[Groups(["project_read", "project_write", "language_read"])]
     private ?Language $start_language = null;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(nullable: true)]
+    #[Groups(["project_read", "project_write", "user_read"])]
     private ?User $collaborator = null;
 
     /**
      * @var Collection<int, Sources>
      */
     #[ORM\OneToMany(mappedBy: 'project', targetEntity: Sources::class, cascade: ['persist', 'remove'])]
+    #[Groups(["project_read", "project_write", "source_read"])]
     private Collection $sources;
 
     /**
      * @var Collection<int, Language>
      */
     #[ORM\ManyToMany(targetEntity: Language::class)]
+    #[Groups(["project_read", "project_write", "language_read"])]
     private Collection $target_languages;
 
     public function __construct()
