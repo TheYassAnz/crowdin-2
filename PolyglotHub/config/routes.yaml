@@ -8,6 +8,6 @@ app_verify_email:
     path: /verify-email/{token}
     controller: App\Controller\RegistrationController::verifyEmail
 
-home:
+default_home:
     path: /
     controller: App\Controller\HomeController::index
