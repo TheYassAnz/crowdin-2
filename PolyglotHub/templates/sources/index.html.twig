@@ -156,6 +156,21 @@ ease: 'power2.out'
 item.addEventListener('mouseenter', () => timeline.play());
 item.addEventListener('mouseleave', () => timeline.reverse());
 });
+
+const cleanupModal = () => {
+document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.remove());
+document.body.classList.remove('modal-open');
+document.body.style.overflow = '';
+document.body.style.paddingRight = '';
+};
+
+document.querySelectorAll('[data-bs-toggle="modal"]').forEach(button => {
+button.addEventListener('click', () => cleanupModal());
+});
+
+document.querySelectorAll('.modal').forEach(modal => {
+modal.addEventListener('hidden.bs.modal', () => cleanupModal());
+});
 });
 	</script>
 {% endblock %}
