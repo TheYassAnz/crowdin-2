@@ -1,47 +1,45 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}PROFILE{% endblock %}
+{% block title %}PROFILE
+{% endblock %}
 
 {% block body %}
 
 
-{% if user is not null %}
-<div class="card mt-5 w-50 mx-auto border rounded p-5">
-    <div class="card-body ">
-        <h3 clads="card-title ">Profil de {{user.getEmail()}}</h3>
-        {% if profil is not null %}
-        <div class="card-text mt-3">
-            <div class="mb-2">
-                <label>Description :</label>
-                <span>{{profil.getDescription()}}</span>
-            </div>
-            <div class="mb-2">
-                <label>Language préféré :</label>
-                <span>{{profil.getPreferredLanguage().getName()}}</span>
-            </div>
-            <div class="mb-2">
-                <label>Crée le </label>
-                <span>{{profil.getCreatedAt()|date('d/m/Y')}}</span>
-            </div>
-        </div>
-        {% else %}
-        <div class="alert alert-warning text-center">L'utilisateur n'a pas encore renseigné ses informations...</div>
-        {% endif %}
-    </div>
-</div>
+	{% if user is not null %}
+		<div class="card mt-5 w-50 mx-auto border rounded p-5">
+			<div class="card-body ">
+				<h3 clads="card-title ">Profil de
+					{{user.getEmail()}}</h3>
+				{% if profil is not null %}
+					<div class="card-text mt-3">
+						<div class="mb-2">
+							<label>Description :</label>
+							<span>{{profil.getDescription()}}</span>
+						</div>
+						<div class="mb-2">
+							<label>Language préféré :</label>
+							<span>{{profil.getPreferredLanguage().getName()}}</span>
+						</div>
+						<div class="mb-2">
+							<label>Crée le
+							</label>
+							<span>{{profil.getCreatedAt()|date('d/m/Y')}}</span>
+						</div>
+					</div>
+				{% else %}
+					<div class="alert alert-warning text-center">L'utilisateur n'a pas encore renseigné ses informations...</div>
+				{% endif %}
+			</div>
+		</div>
 
 
-
-
-{% else %}
-<div class="alert alert-warning text-center">Profile inexistant</div>
-{% endif %}
+	{% else %}
+		<div class="alert alert-warning text-center">Profile inexistant</div>
+	{% endif %}
 </div>
 {% for message in app.flashes('sucess') %}
-<div class="alert alert-sucess">
-    {{message}}
-</div>
-{% endfor %}
-
-
-{% endblock %}
+	<div class="alert alert-sucess">
+		{{message}}
+	</div>
+{% endfor %}{% endblock %}

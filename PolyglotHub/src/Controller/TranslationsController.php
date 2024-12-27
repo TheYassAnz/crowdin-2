@@ -19,7 +19,8 @@ use App\Service\OllamaService;
 class TranslationsController extends AbstractController
 {
     public function __construct(
-        private OllamaService $ollamaService
+        private OllamaService $ollamaService,
+        private EntityManagerInterface $entityManager
     ) {}
 
     #[Route('', name: 'app_translations')]
@@ -92,5 +93,19 @@ class TranslationsController extends AbstractController
                 JsonResponse::HTTP_INTERNAL_SERVER_ERROR
             );
         }
+    }
+
+    #[Route('/translations/{id}/refresh', name: 'app_translations_refresh', methods: ['POST'])]
+    public function refresh(Translations $translation, OllamaService $ollamaService): JsonResponse
+    {
+        $newTranslation = $ollamaService->suggestTranslation(
+            $translation->getSource()->getContent(),
+            $translation->getTargetLanguage()->getCode()
+        );
+        
+        $translation->setTranslatedContent($newTranslation);
+        $this->entityManager->flush();
+        
+        return new JsonResponse(['translation' => $newTranslation]);
     }
 }

@@ -1,126 +1,184 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Translations{% endblock %}
+{% block title %}Translations
+{% endblock %}
 
 {% block stylesheets %}
-    {{ parent() }}
-    <style>
-        .list-group-item {
-            position: relative;
-            overflow: hidden;
-            padding: 1.5rem;
-        }
+{{ parent() }}
+<style>
+    .list-group-item {
+        position: relative;
+        overflow: hidden;
+        padding: 1.5rem;
+    }
 
-        .action-buttons {
-            position: absolute;
-            right: -150px;
-            top: 50%;
-            transform: translateY(-50%);
-            display: flex;
-            gap: 0.5rem;
-            padding: 0.5rem;
-        }
+    .action-buttons {
+        position: absolute;
+        right: -150px;
+        top: 50%;
+        transform: translateY(-50%);
+        display: flex;
+        gap: 0.5rem;
+        padding: 0.5rem;
+    }
 
-        .list-group-item:hover {
-            background-color: #f8f9fa;
-        }
+    .list-group-item:hover {
+        background-color: #f8f9fa;
+    }
 
-        .translation-content {
-            transition: transform 0.3s ease;
-        }
+    .translation-content {
+        transition: transform 0.3s ease;
+    }
 
-        .list-group-item:hover .translation-content {
-            transform: translateX(-100px);
-        }
+    .list-group-item:hover .translation-content {
+        transform: translateX(-100px);
+    }
 
-        hr {
-            margin: 1rem 0;
-            opacity: 0.1;
-        }
-    </style>
+    hr {
+        margin: 1rem 0;
+        opacity: 0.1;
+    }
+</style>
 {% endblock %}
 
 {% block body %}
-    <div class="container mt-4">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h1>
-                <i class="fas fa-language me-1"></i>
-                Traductions
-            </h1>
-            <div>
-                <a href="{{ path('app_translations_new') }}" class="btn btn-dark">
-                    <i class="fas fa-plus"></i>
-                    Créer une traduction
-                </a>
-            </div>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>
+            <i class="fas fa-language me-1"></i>
+            Traductions
+        </h1>
+        <div>
+            <a href="{{ path('app_translations_new') }}" class="btn btn-dark">
+                <i class="fas fa-plus"></i>
+                Créer une traduction
+            </a>
         </div>
-        <hr>
+    </div>
+    <hr>
 
-        <div class="list-group">
-            {% for translation in translations %}
-                <div class="list-group-item">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div class="translation-content">
-                            <h5 class="mb-1">
-                                <span>{{ translation.source.content }}</span>
-                                <i class="fas fa-arrow-right mx-2"></i>
-                                <span>{{ translation.getTranslatedContent() }}</span>
-                            </h5>
+    <div class="list-group">
+        {% for translation in translations %}
+        <div class="list-group-item">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="translation-content">
+                    <h5 class="mb-1">
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="badge bg-light text-dark">
+                                <i class="fas fa-globe-americas"></i>
+                                {{ translation.source.project.startLanguage.name }}
+                            </span>
+                            <span>{{ translation.source.content }}</span>
+                            <i class="fas fa-arrow-right mx-2"></i>
+                            <span class="badge bg-light text-dark">
+                                <i class="fas fa-globe-europe"></i>
+                                {{ translation.targetLanguage.name }}
+                            </span>
+                            <span>{{ translation.getTranslatedContent() }}</span>
                         </div>
-
-                        <div class="action-buttons">
-                            <a href="{{ path('app_translations_show', {id: translation.id}) }}" class="btn btn-info btn-sm">
-                                <i class="fas fa-eye"></i>
-                            </a>
-                            <a href="#" class="btn btn-warning btn-sm">
-                                <i class="fas fa-edit"></i>
-                            </a>
-                            <button class="btn btn-danger btn-sm">
-                                <i class="fas fa-trash"></i>
-                            </button>
+                    </h5>
+                    <small class="text-muted">
+                        <i class="fas fa-clock"></i>
+                        Last updated:
+                        {{ translation.updatedAt|date('Y-m-d H:i') }}
+                    </small>
+                    <div class="mt-2">
+                        <div class="progress" style="height: 5px;">
+                            <div class="progress-bar bg-success" role="progressbar" style="width: 100%"></div>
                         </div>
                     </div>
                 </div>
-            {% else %}
-                <div class="alert alert-dark">No translations found.</div>
-            {% endfor %}
+
+                <div class="action-buttons">
+                    <a href="{{ path('app_translations_show', {id: translation.id}) }}" class="btn btn-info btn-sm" title="View">
+                        <i class="fas fa-eye"></i>
+                    </a>
+                    <a href="#" class="btn btn-warning btn-sm" title="Edit">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                    <button class="btn btn-danger btn-sm" title="Delete">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                    <button class="btn btn-secondary btn-sm refresh-translation" data-id="{{ translation.id }}" title="Refresh translation">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                </div>
+            </div>
         </div>
+        {% else %}
+        <div class="alert alert-dark">No translations found.</div>
+        {% endfor %}
     </div>
+</div>
 {% endblock %}
 
 {% block javascripts %}
-    {{ parent() }}
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            gsap.from('.list-group-item', {
-                duration: 0.5,
-                opacity: 0,
-                y: 30,
-                stagger: 0.1,
-                ease: 'power2.out'
+{{ parent() }}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        gsap.from('.list-group-item', {
+            duration: 0.5,
+            opacity: 0,
+            y: 30,
+            stagger: 0.1,
+            ease: 'power2.out'
+        });
+
+        document.querySelectorAll('.list-group-item').forEach(item => {
+            const buttons = item.querySelector('.action-buttons');
+            const timeline = gsap.timeline({
+                paused: true
             });
 
-            document.querySelectorAll('.list-group-item').forEach(item => {
-                const buttons = item.querySelector('.action-buttons');
-                const timeline = gsap.timeline({paused: true});
+            timeline.to(buttons, {
+                duration: 0.3,
+                right: '1rem',
+                opacity: 1,
+                ease: 'power2.out'
+            }).from(buttons.children, {
+                duration: 0.2,
+                opacity: 0,
+                x: 20,
+                stagger: 0.05,
+                ease: 'power2.out'
+            }, '-=0.1');
 
-                timeline.to(buttons, {
-                    duration: 0.3,
-                    right: '1rem',
-                    opacity: 1,
-                    ease: 'power2.out'
-                }).from(buttons.children, {
-                    duration: 0.2,
-                    opacity: 0,
-                    x: 20,
-                    stagger: 0.05,
-                    ease: 'power2.out'
-                }, '-=0.1');
+            item.addEventListener('mouseenter', () => timeline.play());
+            item.addEventListener('mouseleave', () => timeline.reverse());
+        });
 
-                item.addEventListener('mouseenter', () => timeline.play());
-                item.addEventListener('mouseleave', () => timeline.reverse());
+        document.querySelectorAll('.refresh-translation').forEach(button => {
+            button.addEventListener('click', async (e) => {
+                const id = e.target.dataset.id;
+                const icon = button.querySelector('i');
+
+                icon.classList.add('fa-spin');
+                button.disabled = true;
+
+                try {
+                    const response = await fetch(`/translations/${id}/refresh`, {
+                        method: 'POST'
+                    });
+
+                    if (!response.ok)
+                        throw new Error('Refresh failed');
+
+
+
+                    const data = await response.json();
+                    const translationElement = button.closest('.list-group-item').querySelector('.translation-content span:last-child');
+                    translationElement.textContent = data.translation;
+
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Failed to refresh translation');
+                } finally {
+                    icon.classList.remove('fa-spin');
+                    button.disabled = false;
+                }
             });
         });
-    </script>
+    });
+</script>
 {% endblock %}
